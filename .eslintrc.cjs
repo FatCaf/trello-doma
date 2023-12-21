@@ -10,13 +10,18 @@ module.exports = {
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.json', // Adjust the path accordingly
+  },
+  overrides: [
+    {
+      files: ['vite.config.ts'],
+      // Other specific configurations for this file
+    },
+  ],
   plugins: ['react-refresh'],
   rules: {
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
-    ],
-    'prettier/prettier': 'error',
+    'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.ts', 'tsx'] }],
     'react/jsx-props-no-spreading': 'off',
     'react/button-has-type': 'off',
