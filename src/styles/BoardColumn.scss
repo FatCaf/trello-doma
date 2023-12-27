@@ -1,3 +1,6 @@
+@import './variables.scss';
+@import './mixines.scss';
+
 .column {
   padding: 0.625rem 0.3125rem;
   border-radius: 8px;
@@ -11,7 +14,7 @@
 .column__title {
   padding-bottom: 0.3125rem;
   cursor: pointer;
-  color: #172b4d;
+  color: $main-text-color;
 }
 
 .column__cards {
@@ -23,12 +26,11 @@
 
 .add__card {
   cursor: pointer;
-  color: #172b4d;
+  color: $main-text-color;
   border-radius: 0.5rem;
   padding: 0.3125rem 10px;
   &:hover {
-    background-color: gray;
-    background: rgba(0, 0, 0, 0.2);
+    @include setBackgroundHoveColor(gray, 0.2);
   }
   & span {
     font-size: 1.125rem;

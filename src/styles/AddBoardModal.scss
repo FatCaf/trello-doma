@@ -1,0 +1,36 @@
+@import './variables.scss';
+
+.add__window {
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: absolute;
+  background-color: #f1f2f4;
+  padding: 0.625rem;
+  top: 25%;
+  color: $main-text-color;
+  z-index: 999;
+}
+
+.preview {
+  padding: 0.625rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.625rem;
+}
+
+.properties span {
+  color: red;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.cancel {
+  color: $main-text-color;
+  font-weight: 700;
+  font-size: 1.25rem;
+  cursor: pointer;
+}

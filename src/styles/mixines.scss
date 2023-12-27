@@ -1,0 +1,4 @@
+@mixin setBackgroundHoveColor($color, $alpha) {
+  background-color: $color;
+  background: rgba($color, $alpha);
+}

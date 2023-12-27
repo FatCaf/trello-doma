@@ -1,3 +1,5 @@
+@import './variables.scss';
+
 .board {
   position: relative;
   display: flex;
@@ -9,10 +11,10 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    color: white;
+    color: $secondary-text-color;
     padding: 0.625rem 0.625rem;
     background-color: transparent;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid gray;
     background: rgba(0, 0, 0, 0.4);
   }
 }
@@ -44,7 +46,7 @@
   background: rgba($color: #fff, $alpha: 0.3);
   border-radius: 0.5rem;
   padding: 0.3125rem 10px;
-  color: #fff;
+  color: $secondary-text-color;
   & span {
     font-size: 1.125rem;
   }

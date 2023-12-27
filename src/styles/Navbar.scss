@@ -1,0 +1,38 @@
+@import './variables.scss';
+@import './mixines.scss';
+
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-bottom: 1px solid gray;
+}
+
+.title {
+  color: $main-text-color;
+}
+
+.navbar {
+  margin-left: 15.625rem;
+}
+
+.nav__list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav__item {
+  padding: 0.3125rem 0.625rem;
+  border-radius: 4px;
+  & a {
+    color: $main-text-color;
+  }
+  margin-right: 0.625rem;
+  &:last-child {
+    margin-right: 0;
+  }
+  &:hover {
+    @include setBackgroundHoveColor(gray, 0.4);
+  }
+}

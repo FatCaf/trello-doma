@@ -1,3 +1,5 @@
+@import './variables';
+
 .settings__window {
   position: absolute;
   top: 0;
@@ -10,6 +12,7 @@
   justify-content: space-around;
   & hr {
     width: 100%;
+    color: $main-text-color;
   }
 }
 
@@ -18,10 +21,10 @@
   justify-content: space-between;
   align-items: center;
   & h4 {
-    color: #172b4d;
+    color: $main-text-color;
   }
   & span {
-    color: #172b4d;
+    color: $main-text-color;
     font-weight: 700;
     font-size: 1.25rem;
     cursor: pointer;

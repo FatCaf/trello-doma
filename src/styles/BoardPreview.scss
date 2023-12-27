@@ -1,0 +1,21 @@
+@import './mixines.scss';
+@import './variables.scss';
+
+.board__preview {
+  width: 12.5rem;
+  height: 6.25rem;
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s linear;
+  &:hover {
+    transform: translateY(-10px);
+  }
+}
+
+.board__title {
+  color: $secondary-text-color;
+  padding: 5px;
+}
