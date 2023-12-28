@@ -10,12 +10,10 @@ export default function BoardColumn({ title, cards }: IBoardColumn): JSX.Element
         <h4>{title}</h4>
       </div>
       <div className="column__cards">
-        {cards.map((card) => (
-          <ColumnCard {...card} key={card.id} />
-        ))}
+        {cards?.map((card) => <ColumnCard {...card} key={card.id} />)}
         <div className="add__card">
           <p>
-            <span>+</span> Додати ще одну картку
+            <span>+</span> Додати нову картку
           </p>
         </div>
       </div>
