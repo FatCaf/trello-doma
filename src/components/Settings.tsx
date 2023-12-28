@@ -1,12 +1,15 @@
 import React from 'react';
 import '../styles/Settings.scss';
+import { useDispatch } from 'react-redux';
 import { ISettings } from '../models/models';
+import { setBodyColor } from '../store/slices/bodyColorSlice';
 
-export default function Settings({ closeModal, changeBodyColor }: ISettings): JSX.Element {
+export default function Settings({ closeModal }: ISettings): JSX.Element {
+  const dispatch = useDispatch();
+
   const handleClick = (event: React.MouseEvent<HTMLDivElement>): void => {
     const clickedColor = getComputedStyle(event.currentTarget).backgroundColor;
-
-    changeBodyColor(clickedColor);
+    dispatch(setBodyColor(clickedColor));
   };
 
   return (
