@@ -38,6 +38,7 @@ export interface IColumnCard extends Card {}
 
 export interface ISettings {
   closeModal: () => void;
+  onBoardAdded: () => void;
 }
 
 export interface IResponse {
