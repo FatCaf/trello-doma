@@ -1,9 +1,15 @@
+@import './variables.scss';
+@import './mixines.scss';
+
 .card {
   border: 2px solid grey;
   border-radius: 6px;
   width: 100%;
   padding: 0.1875rem 0.25rem;
   margin-bottom: 0.625rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: pointer;
   &:hover {
     border-color: blue;
@@ -14,5 +20,17 @@
   }
   &:last-child {
     margin-bottom: 0;
+  }
+}
+
+.card__delete {
+  cursor: pointer;
+  color: $main-text-color;
+  &:hover {
+    @include setBackgroundHoveColor(gray, 0.2);
+    border-radius: 4px;
+  }
+  & span {
+    font-size: 1.125rem;
   }
 }

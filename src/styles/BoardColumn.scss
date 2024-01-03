@@ -11,10 +11,32 @@
   }
 }
 
-.column__title {
-  padding-bottom: 0.3125rem;
+.column__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.column__delete {
   cursor: pointer;
   color: $main-text-color;
+  &:hover {
+    @include setBackgroundHoveColor(gray, 0.2);
+    border-radius: 4px;
+  }
+  & span {
+    font-size: 1.125rem;
+  }
+}
+
+.column__title {
+  padding: 0 0.3125rem;
+  cursor: pointer;
+  color: $main-text-color;
+  &:hover {
+    @include setBackgroundHoveColor(gray, 0.2);
+    border-radius: 4px;
+  }
 }
 
 .column__cards {
