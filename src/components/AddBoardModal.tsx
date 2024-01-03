@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { AxiosError } from 'axios';
 import preview from '../assets/preview.png';
 import '../styles/AddBoardModal.scss';
-import { BoardPreviewTile, ISettings } from '../models/models';
-import instance from '../api/requests';
+import { useAppDispatch } from '../store/hooks';
+import { BoardPreviewTile } from '../models/models';
+import { addBoard } from '../store/slices/homeSlice';
+import { closeModal } from '../store/slices/modalSlice';
 
-export default function AddBoardModal({ closeModal, onBoardAdded }: ISettings): JSX.Element {
+export default function AddBoardModal(): JSX.Element {
+  const dispatch = useAppDispatch();
   const [previewColor, setPreviewColor] = useState('rgb(205, 90, 145)');
   const [boardName, setBoardName] = useState('');
   const [isButtonDisabled, setButtonDisabled] = useState(true);
@@ -16,15 +18,6 @@ export default function AddBoardModal({ closeModal, onBoardAdded }: ISettings): 
     setPreviewColor(clickedColor);
   };
 
-  async function addBoard(data: BoardPreviewTile): Promise<void> {
-    try {
-      await instance.post('/board', data);
-    } catch (e: unknown) {
-      const error = e as AxiosError;
-      throw new Error(error.message);
-    }
-  }
-
   const submitHandler = async (event: React.MouseEvent<HTMLFormElement>): Promise<void> => {
     try {
       event.preventDefault();
@@ -34,9 +27,7 @@ export default function AddBoardModal({ closeModal, onBoardAdded }: ISettings): 
           background: previewColor,
         },
       };
-      await addBoard(postData);
-      closeModal();
-      onBoardAdded();
+      await dispatch(addBoard(postData));
     } catch (e: unknown) {
       const error = e as string;
       throw new Error(error);
@@ -46,7 +37,7 @@ export default function AddBoardModal({ closeModal, onBoardAdded }: ISettings): 
   return (
     <div className="wrapper">
       <div className="add__window">
-        <div className="cancel" onClick={closeModal}>
+        <div className="cancel" onClick={() => dispatch(closeModal())}>
           <span>X</span>
         </div>
         <div className="preview" style={{ backgroundColor: previewColor }}>
