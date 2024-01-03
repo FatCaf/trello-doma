@@ -1,22 +1,42 @@
 import React from 'react';
 import '../styles/Settings.scss';
-import { useDispatch } from 'react-redux';
-import { ISettings } from '../models/models';
-import { setBodyColor } from '../store/slices/bodyColorSlice';
+import { useParams } from 'react-router';
+import { AxiosError } from 'axios';
+import { IColorEdit } from '../models/models';
+import { editColor, setBodyColor } from '../store/slices/bodyColorSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { closeModal } from '../store/slices/modalSlice';
 
-export default function Settings({ closeModal }: ISettings): JSX.Element {
-  const dispatch = useDispatch();
+export default function Settings(): JSX.Element {
+  const dispatch = useAppDispatch();
+  const title = useAppSelector((state) => state.board.board.title);
+  const { boardId } = useParams();
 
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>): void => {
+  const handleClick = async (event: React.MouseEvent<HTMLDivElement>): Promise<void> => {
     const clickedColor = getComputedStyle(event.currentTarget).backgroundColor;
+    const editData: IColorEdit = {
+      boardId,
+      data: {
+        title,
+        custom: {
+          background: clickedColor,
+        },
+      },
+    };
     dispatch(setBodyColor(clickedColor));
+    try {
+      await dispatch(editColor(editData));
+    } catch (error) {
+      const e = error as AxiosError;
+      throw new Error(e.message);
+    }
   };
 
   return (
     <div className="settings__window">
       <div className="settings__header">
         <h4>Змінити колір</h4>
-        <div className="cancel" onClick={closeModal}>
+        <div className="cancel" onClick={() => dispatch(closeModal())}>
           <span>X</span>
         </div>
       </div>
