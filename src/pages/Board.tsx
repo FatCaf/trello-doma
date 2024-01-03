@@ -1,70 +1,143 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
-import { AxiosError } from 'axios';
 import { useSelector } from 'react-redux';
 import BoardColumn from '../components/BoardColumn';
 import Settings from '../components/Settings';
 import '../styles/Board.scss';
-import { IBoard } from '../models/models';
 import settings from '../assets/settings.svg';
-import instance from '../api/requests';
 import { selectBodyColor } from '../store/slices/bodyColorSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { addColumn, editBoard, fetchBoard } from '../store/slices/boardSlice';
+import { IBoardEdit, IColumnPost } from '../models/models';
+import { openModal } from '../store/slices/modalSlice';
+import { closeInput, openInput } from '../store/slices/inputSlice';
 
 export default function Board(): JSX.Element {
   const bodyColor = useSelector(selectBodyColor);
+  const [columnTitle, setColumnTitle] = useState('Безіменна колонка');
   const { boardId } = useParams<{ boardId: string }>();
-  const [board, setBoard] = useState<IBoard | null>(null);
-  const [boardTitle, setBoardTitle] = useState<string | undefined>('Board name');
-  const [modal, setModal] = useState(false);
+  const isOpen = useAppSelector((state) => state.modal.isOpen);
+  const dispatch = useAppDispatch();
+  const { status } = useAppSelector((state) => state.board);
+  const { board } = useAppSelector((state) => state.board);
+  const lists = useAppSelector((state) => state.board.board.lists);
+  const backgroundColor = useAppSelector((state) => state.board.board.custom.background);
+  const inputs = useAppSelector((state) => state.input.inputs);
 
   useEffect(() => {
-    async function fetchTest(): Promise<void> {
-      try {
-        const response: IBoard = await instance.get(`/board/${boardId}`);
-        setBoard(response);
-      } catch (e: unknown) {
-        const error = e as AxiosError;
-        throw new Error(error.message);
+    dispatch(fetchBoard(boardId));
+  }, [boardId, dispatch]);
+
+  useEffect(() => {
+    if (backgroundColor) {
+      document.body.style.backgroundColor = backgroundColor;
+    } else document.body.style.backgroundColor = bodyColor;
+  }, [backgroundColor, bodyColor]);
+
+  useEffect(() => {
+    const handleClose = (): void => {
+      if (Object.keys(inputs).length > 0) {
+        dispatch(closeInput());
       }
+    };
+
+    document.addEventListener('mousedown', handleClose);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClose);
+    };
+  }, [inputs, dispatch]);
+
+  const handleAdd = async (event: React.MouseEvent<HTMLFormElement>): Promise<void> => {
+    try {
+      event.preventDefault();
+      const postData: IColumnPost = {
+        boardId,
+        data: {
+          title: columnTitle,
+          position: 1,
+        },
+      };
+      await dispatch(addColumn(postData));
+      if (status === 'resolved') await dispatch(fetchBoard(boardId));
+    } catch (e: unknown) {
+      const error = e as string;
+      throw new Error(error);
     }
+  };
 
-    fetchTest();
-  }, [boardId]);
+  const handleEdit = async (event: React.MouseEvent<HTMLFormElement>): Promise<void> => {
+    try {
+      event.preventDefault();
+      const editData: IBoardEdit = {
+        boardId,
+        data: {
+          title: columnTitle,
+          custom: {
+            background: bodyColor,
+          },
+        },
+      };
+      await dispatch(editBoard(editData));
+      if (status === 'resolved') await dispatch(fetchBoard(boardId));
+    } catch (e: unknown) {
+      const error = e as string;
+      throw new Error(error);
+    }
+  };
 
-  useEffect(() => {
-    setBoardTitle(board?.title);
-  }, [board?.title]);
-
-  useEffect(() => {
-    document.body.style.backgroundColor = bodyColor;
-  }, [bodyColor]);
+  const handleClick = (inputId: string): void => {
+    dispatch(openInput({ id: inputId }));
+  };
 
   return (
-    <div className="board" key="board">
+    <div className="board" key={boardId} id={`${boardId}`}>
       <div className="board__header">
-        <h2>{boardTitle}</h2>
-        <div className="settings" onClick={() => setModal(true)}>
+        {inputs[`${boardId}`] ? (
+          <form onSubmit={handleEdit}>
+            <input
+              type="text"
+              placeholder="Введіть назву дошки"
+              required
+              onChange={(event) => setColumnTitle(event?.target.value)}
+            />
+            <button type="submit">Змінити</button>
+          </form>
+        ) : (
+          <h2 id={`${boardId}`} onClick={(event) => handleClick(event.currentTarget.id)}>
+            {board.title}
+          </h2>
+        )}
+        <div className="settings" onClick={() => dispatch(openModal())}>
           <img src={settings} alt="settings" />
         </div>
       </div>
       <div className="columns">
-        {board?.lists.map((list) => <BoardColumn {...list} key={list?.id} />)}
-        <div className="add__column">
-          <p>
-            <span>+</span> Додати нову колонку
-          </p>
+        {status === 'loading' && <h2>Loading...</h2>}
+        {lists && lists.map((list) => <BoardColumn {...list} key={list?.id} />)}
+        <div
+          className="add__column"
+          id={`${typeof boardId === 'number' ? boardId : +boardId + 1}`}
+          onClick={(event) => handleClick(event.currentTarget.id)}
+        >
+          {inputs[`${typeof boardId === 'number' ? boardId : +boardId + 1}`] ? (
+            <form onSubmit={handleAdd}>
+              <input
+                type="text"
+                placeholder="Введіть назву колонки"
+                required
+                onChange={(event) => setColumnTitle(event?.target.value)}
+              />
+              <button type="submit">Додати</button>
+            </form>
+          ) : (
+            <p>
+              <span>+</span> Додати нову колонку
+            </p>
+          )}
         </div>
       </div>
-      {modal && (
-        <Settings
-          closeModal={() => setModal(false)}
-          // eslint-disable-next-line func-names
-          // eslint-disable-next-line react/jsx-no-bind
-          onBoardAdded={function (): void {
-            throw new Error('Function not implemented.');
-          }}
-        />
-      )}
+      {isOpen && <Settings />}
     </div>
   );
 }
