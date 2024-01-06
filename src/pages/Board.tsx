@@ -1,52 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router';
-import { useSelector } from 'react-redux';
 import BoardColumn from '../components/BoardColumn';
 import Settings from '../components/Settings';
 import '../styles/Board.scss';
 import settings from '../assets/settings.svg';
-import { selectBodyColor } from '../store/slices/bodyColorSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { addColumn, editBoard, fetchBoard } from '../store/slices/boardSlice';
 import { IBoardEdit, IColumnPost } from '../models/models';
 import { openModal } from '../store/slices/modalSlice';
 import { closeInput, openInput } from '../store/slices/inputSlice';
+import useOutsideClick from '../hooks/useOutsideClick';
+import BoardLoader from '../components/BoardLoader';
+import BoardError from '../components/BoardError';
 
 export default function Board(): JSX.Element {
-  const bodyColor = useSelector(selectBodyColor);
   const [columnTitle, setColumnTitle] = useState('Безіменна колонка');
   const { boardId } = useParams<{ boardId: string }>();
-  const isOpen = useAppSelector((state) => state.modal.isOpen);
+  const { isOpen } = useAppSelector((state) => state.modal);
   const dispatch = useAppDispatch();
   const { status } = useAppSelector((state) => state.board);
   const { board } = useAppSelector((state) => state.board);
-  const lists = useAppSelector((state) => state.board.board.lists);
+  const { lists } = useAppSelector((state) => state.board.board);
   const backgroundColor = useAppSelector((state) => state.board.board.custom.background);
-  const inputs = useAppSelector((state) => state.input.inputs);
+  const { inputs } = useAppSelector((state) => state.input);
+  const addColumnRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     dispatch(fetchBoard(boardId));
   }, [boardId, dispatch]);
 
   useEffect(() => {
-    if (backgroundColor) {
-      document.body.style.backgroundColor = backgroundColor;
-    } else document.body.style.backgroundColor = bodyColor;
-  }, [backgroundColor, bodyColor]);
+    document.body.style.backgroundColor = backgroundColor;
+  }, [backgroundColor]);
 
-  useEffect(() => {
-    const handleClose = (): void => {
-      if (Object.keys(inputs).length > 0) {
-        dispatch(closeInput());
-      }
-    };
+  useOutsideClick(titleRef.current, () => {
+    dispatch(closeInput());
+  });
 
-    document.addEventListener('mousedown', handleClose);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClose);
-    };
-  }, [inputs, dispatch]);
+  useOutsideClick(addColumnRef.current, () => {
+    dispatch(closeInput());
+  });
 
   const handleAdd = async (event: React.MouseEvent<HTMLFormElement>): Promise<void> => {
     try {
@@ -55,7 +49,7 @@ export default function Board(): JSX.Element {
         boardId,
         data: {
           title: columnTitle,
-          position: 1,
+          position: lists.length ? lists.length + 1 : 1,
         },
       };
       await dispatch(addColumn(postData));
@@ -74,61 +68,73 @@ export default function Board(): JSX.Element {
         data: {
           title: columnTitle,
           custom: {
-            background: bodyColor,
+            background: backgroundColor,
           },
         },
       };
       await dispatch(editBoard(editData));
-      if (status === 'resolved') await dispatch(fetchBoard(boardId));
+      dispatch(closeInput());
+      await dispatch(fetchBoard(boardId));
     } catch (e: unknown) {
       const error = e as string;
       throw new Error(error);
     }
   };
 
-  const handleClick = (inputId: string): void => {
+  const handleClick = (inputId: string, event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
+    event.stopPropagation();
     dispatch(openInput({ id: inputId }));
   };
 
   return (
     <div className="board" key={boardId} id={`${boardId}`}>
+      {status === 'loading' && <BoardLoader />}
+      {status === 'rejected' && <BoardError />}
       <div className="board__header">
-        {inputs[`${boardId}`] ? (
-          <form onSubmit={handleEdit}>
-            <input
-              type="text"
-              placeholder="Введіть назву дошки"
-              required
-              onChange={(event) => setColumnTitle(event?.target.value)}
-            />
-            <button type="submit">Змінити</button>
-          </form>
-        ) : (
-          <h2 id={`${boardId}`} onClick={(event) => handleClick(event.currentTarget.id)}>
-            {board.title}
-          </h2>
-        )}
+        <div id={`${boardId}`} ref={titleRef} onClick={(event) => handleClick(event.currentTarget.id, event)}>
+          {inputs[0]?.id === `${boardId}` ? (
+            <form onSubmit={handleEdit} name="boardTitle" className="input__form">
+              <input
+                className="form__input"
+                type="text"
+                placeholder="Введіть назву дошки"
+                name="boardTitle"
+                required
+                onChange={(event) => setColumnTitle(event?.target.value)}
+              />
+              <button className="add" type="submit">
+                Змінити
+              </button>
+            </form>
+          ) : (
+            <h2>{board.title}</h2>
+          )}
+        </div>
         <div className="settings" onClick={() => dispatch(openModal())}>
           <img src={settings} alt="settings" />
         </div>
       </div>
-      <div className="columns">
-        {status === 'loading' && <h2>Loading...</h2>}
+      <div className="columns" key="columns">
         {lists && lists.map((list) => <BoardColumn {...list} key={list?.id} />)}
         <div
           className="add__column"
           id={`${typeof boardId === 'number' ? boardId : +boardId + 1}`}
-          onClick={(event) => handleClick(event.currentTarget.id)}
+          ref={addColumnRef}
+          onClick={(event) => handleClick(event.currentTarget.id, event)}
         >
-          {inputs[`${typeof boardId === 'number' ? boardId : +boardId + 1}`] ? (
-            <form onSubmit={handleAdd}>
+          {inputs[0]?.id === `${typeof boardId === 'number' ? boardId : +boardId + 1}` ? (
+            <form onSubmit={handleAdd} name="columnTitle" className="input__form">
               <input
+                className="form__input"
                 type="text"
                 placeholder="Введіть назву колонки"
+                name="columnTitle"
                 required
                 onChange={(event) => setColumnTitle(event?.target.value)}
               />
-              <button type="submit">Додати</button>
+              <button className="add" type="submit">
+                Додати
+              </button>
             </form>
           ) : (
             <p>
