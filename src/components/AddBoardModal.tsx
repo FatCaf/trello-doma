@@ -10,7 +10,6 @@ export default function AddBoardModal(): JSX.Element {
   const dispatch = useAppDispatch();
   const [previewColor, setPreviewColor] = useState('rgb(205, 90, 145)');
   const [boardName, setBoardName] = useState('');
-  const [isButtonDisabled, setButtonDisabled] = useState(true);
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>): void => {
     const clickedColor = getComputedStyle(event.currentTarget).backgroundColor;
@@ -59,21 +58,22 @@ export default function AddBoardModal(): JSX.Element {
           </div>
           <hr />
           <form onSubmit={submitHandler}>
-            <p>
-              <span>*</span> Введіть назву дошки
-            </p>
-            <input
-              className="board__name"
-              type="text"
-              placeholder="Введіть назву дошки"
-              required
-              name="title"
-              onChange={(event) => {
-                setButtonDisabled(!isButtonDisabled);
-                setBoardName(event.target.value);
-              }}
-            />
-            <button className="add" type="submit" disabled={isButtonDisabled}>
+            <div className="input__block">
+              <p>
+                <span>*</span> Введіть назву дошки
+              </p>
+              <input
+                className="form__input"
+                type="text"
+                placeholder="Введіть назву дошки"
+                required
+                name="title"
+                onChange={(event) => {
+                  setBoardName(event.target.value);
+                }}
+              />
+            </div>
+            <button className="add large" type="submit">
               Додати
             </button>
           </form>
