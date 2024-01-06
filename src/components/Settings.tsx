@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { memo } from 'react';
 import '../styles/Settings.scss';
 import { useParams } from 'react-router';
 import { AxiosError } from 'axios';
 import { IColorEdit } from '../models/models';
-import { editColor, setBodyColor } from '../store/slices/bodyColorSlice';
+import { editColor } from '../store/slices/bodyColorSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { closeModal } from '../store/slices/modalSlice';
+import { fetchBoard } from '../store/slices/boardSlice';
 
-export default function Settings(): JSX.Element {
+const Settings = memo((): JSX.Element => {
   const dispatch = useAppDispatch();
+  const { boardId } = useParams<{ boardId: string }>();
   const title = useAppSelector((state) => state.board.board.title);
-  const { boardId } = useParams();
+  const isOpen = useAppSelector((state) => state.modal.isOpen);
 
   const handleClick = async (event: React.MouseEvent<HTMLDivElement>): Promise<void> => {
     const clickedColor = getComputedStyle(event.currentTarget).backgroundColor;
@@ -23,9 +25,9 @@ export default function Settings(): JSX.Element {
         },
       },
     };
-    dispatch(setBodyColor(clickedColor));
     try {
       await dispatch(editColor(editData));
+      await dispatch(fetchBoard(boardId));
     } catch (error) {
       const e = error as AxiosError;
       throw new Error(e.message);
@@ -33,7 +35,7 @@ export default function Settings(): JSX.Element {
   };
 
   return (
-    <div className="settings__window">
+    <div className={`settings__window ${isOpen ? 'opened' : 'closed'}`}>
       <div className="settings__header">
         <h4>Змінити колір</h4>
         <div className="cancel" onClick={() => dispatch(closeModal())}>
@@ -55,4 +57,6 @@ export default function Settings(): JSX.Element {
       </div>
     </div>
   );
-}
+});
+
+export default Settings;
