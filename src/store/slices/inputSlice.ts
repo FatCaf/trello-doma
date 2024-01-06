@@ -3,15 +3,14 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 /* eslint-disable no-param-reassign */
 interface InputState {
   inputs: {
-    [inputId: string]: {
-      open: boolean;
-      value?: string;
-    };
-  };
+    id: string;
+    open: boolean;
+    value?: string;
+  }[];
 }
 
 const initialState: InputState = {
-  inputs: {},
+  inputs: [],
 };
 
 interface OpenInputAction extends PayloadAction<{ id: string }> {}
@@ -22,10 +21,12 @@ const inputSlice = createSlice({
   reducers: {
     openInput: (state, action: OpenInputAction) => {
       const inputId = action.payload.id;
-      state.inputs[inputId] = { ...state.inputs[inputId], open: true };
+      if (state.inputs.length > 0) state.inputs = [];
+
+      state.inputs.push({ id: inputId, open: true });
     },
     closeInput: (state) => {
-      state.inputs = {};
+      state.inputs = [];
     },
   },
 });
