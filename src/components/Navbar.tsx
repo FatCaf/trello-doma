@@ -10,7 +10,7 @@ export default function Navbar(): JSX.Element {
       </div>
       <nav className="navbar">
         <ul className="nav__list">
-          <li className="nav__item" onClick={() => (document.body.style.backgroundColor = 'rgb(255, 255, 255)')}>
+          <li className="nav__item" onClick={() => (document.body.style.backgroundColor = '#f1f2f4')}>
             <Link to="/">На головну</Link>
           </li>
         </ul>
