@@ -29,6 +29,7 @@ export default function ColumnCard({ id, title }: IColumnCard): JSX.Element {
           onClick: async (): Promise<void> => {
             try {
               await dispatch(deleteCard(deleteData));
+              await dispatch(fetchBoard(boardId));
               if (status === 'resolved') await dispatch(fetchBoard(boardId));
             } catch (e: unknown) {
               const error = e as string;
