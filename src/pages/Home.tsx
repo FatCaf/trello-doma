@@ -54,27 +54,32 @@ export default function Home(): JSX.Element {
   };
 
   return (
-    <div className="home">
-      <div className="board__grid">
-        {status === 'loading' && <h2>Loading...</h2>}
-        {boards &&
-          boards.map((board) => (
-            <div className="board__link" key={board?.id}>
-              <Link to={`/board/${board?.id}`} key={board?.id}>
-                <BoardPreview {...board} key={board?.id} />
-              </Link>
-              <div className="board__delete" id={`${board?.id}`} data-name={board?.title} onClick={handleDelete}>
-                <span>X</span>
-              </div>
-            </div>
-          ))}
-        <div className="add__board" onClick={() => dispatch(openModal())}>
-          <p>
-            <span>+</span> Додати нову дошку
-          </p>
+    <div className="container">
+      <div className="home">
+        <div className="home__title">
+          <h2>Ваші дошки</h2>
         </div>
+        <div className="board__grid">
+          {status === 'loading' && <h2>Loading...</h2>}
+          {boards &&
+            boards.map((board) => (
+              <div className="board__link" key={board?.id}>
+                <Link to={`/board/${board?.id}`} key={board?.id}>
+                  <BoardPreview {...board} key={board?.id} />
+                </Link>
+                <div className="board__delete" id={`${board?.id}`} data-name={board?.title} onClick={handleDelete}>
+                  <span>X</span>
+                </div>
+              </div>
+            ))}
+          <div className="add__board" onClick={() => dispatch(openModal())}>
+            <p>
+              <span>+</span> Додати нову дошку
+            </p>
+          </div>
+        </div>
+        {isOpen && <AddBoardModal />}
       </div>
-      {isOpen && <AddBoardModal />}
     </div>
   );
 }
