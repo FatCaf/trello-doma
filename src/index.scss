@@ -1,3 +1,6 @@
+@import '../src/styles/confirm-alert.scss';
+@import './styles/variables.scss';
+
 * {
   box-sizing: border-box;
 }
@@ -5,6 +8,7 @@
 body {
   margin: 0;
   font-family: 'Nunito', sans-serif;
+  background-color: $tile-bgc;
 }
 
 h1,
@@ -27,4 +31,43 @@ li {
 a {
   text-decoration: none;
   color: white;
+}
+
+button {
+  border: none;
+}
+
+.input__form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form__input {
+  margin-right: 0.1875rem;
+  padding: 0.3125rem;
+  border-radius: 0.375rem;
+  background-color: $tile-bgc;
+  color: $main-text-color;
+  border: 2px solid $border-hover-color;
+}
+
+.add {
+  padding: 5px;
+  cursor: pointer;
+  background-color: $tile-bgc;
+  border-radius: 6px;
+  width: 100%;
+  color: $main-text-color;
+  font-size: 16px;
+  &:hover {
+    @include setBackgroundHoveColor($border-hover-color, 0.6);
+    color: $tile-bgc;
+  }
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 15px;
 }
