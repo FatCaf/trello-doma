@@ -9,13 +9,14 @@
   align-items: start;
   border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.2s linear;
+  transition: box-shadow 0.2s linear;
   &:hover {
-    transform: translateY(-10px);
+    box-shadow: 0 0 5px black;
   }
 }
 
 .board__title {
   color: $secondary-text-color;
+  max-width: 75%;
   padding: 5px;
 }

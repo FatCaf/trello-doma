@@ -1,0 +1,53 @@
+@import './variables.scss';
+@import './mixines.scss';
+
+.react-confirm-alert-svg {
+  display: none;
+}
+
+.react-confirm-alert {
+  position: absolute;
+  margin-top: 9.375rem;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center horizontally and vertically */
+}
+
+.react-confirm-alert-body {
+  background-color: $tile-bgc;
+  padding: 3.125rem;
+  border-radius: 8px;
+  color: $main-text-color;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.625rem;
+  box-shadow: 0 0 5px black;
+}
+
+.react-confirm-alert-button-group {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  & button {
+    padding: 0.625rem 0.9375rem;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  & button[label='Так'] {
+    background-color: $yes-color;
+
+    &:hover {
+      @include setBackgroundHoveColor($yes-color, 0.8);
+    }
+  }
+  & button[label='Ні'] {
+    background-color: $no-color;
+
+    &:hover {
+      @include setBackgroundHoveColor($no-color, 0.8);
+    }
+  }
+}
