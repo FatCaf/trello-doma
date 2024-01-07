@@ -120,11 +120,11 @@ export default function Board(): JSX.Element {
         {lists && lists.map((list) => <BoardColumn {...list} key={list?.id} />)}
         <div
           className="add__column"
-          id={`${typeof boardId === 'number' ? boardId : +boardId + 1}`}
+          id={`${typeof boardId === 'number' ? boardId : (boardId as never) + 1}`}
           ref={addColumnRef}
           onClick={(event) => handleClick(event.currentTarget.id, event)}
         >
-          {inputs[0]?.id === `${typeof boardId === 'number' ? boardId : +boardId + 1}` ? (
+          {inputs[0]?.id === `${typeof boardId === 'number' ? boardId : (boardId as never) + 1}` ? (
             <form onSubmit={handleAdd} name="columnTitle" className="input__form">
               <input
                 className="form__input"
