@@ -1,4 +1,3 @@
-import React from 'react';
 import '../styles/BoardPreview.scss';
 import { BoardPreviewTile } from '../models/models';
 

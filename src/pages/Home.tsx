@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import * as React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { confirmAlert } from 'react-confirm-alert';
 import '../styles/Home.scss';

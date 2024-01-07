@@ -25,6 +25,7 @@ module.exports = {
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.ts', 'tsx'] }],
     'react/jsx-props-no-spreading': 'off',
     'react/button-has-type': 'off',
+    'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/explicit-function-return-type': 2,
     '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',

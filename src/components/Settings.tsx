@@ -1,4 +1,5 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
+import * as React from 'react';
 import '../styles/Settings.scss';
 import { useParams } from 'react-router';
 import { AxiosError } from 'axios';

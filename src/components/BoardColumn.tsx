@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import * as React from 'react';
 import { useParams } from 'react-router';
 import { confirmAlert } from 'react-confirm-alert';
 import ColumnCard from './ColumnCard';

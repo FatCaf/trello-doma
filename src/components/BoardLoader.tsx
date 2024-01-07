@@ -1,4 +1,3 @@
-import React from 'react';
 import '../styles/BoardLoader.scss';
 
 export default function BoardLoader(): JSX.Element {

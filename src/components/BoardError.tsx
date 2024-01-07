@@ -1,4 +1,3 @@
-import React from 'react';
 import '../styles/BoardError.scss';
 
 export default function BoardError(): JSX.Element {

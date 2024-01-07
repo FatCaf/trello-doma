@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import * as React from 'react';
 import preview from '../assets/preview.png';
 import '../styles/AddBoardModal.scss';
 import { useAppDispatch } from '../store/hooks';
