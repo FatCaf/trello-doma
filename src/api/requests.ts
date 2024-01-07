@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { api } from '../common/constants';
 
+const test: string = api.baseURL.replaceAll(/'/, '');
+
 const instance = axios.create({
   baseURL: api.baseURL,
   headers: {
