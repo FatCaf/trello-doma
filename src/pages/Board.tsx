@@ -99,6 +99,8 @@ export default function Board(): JSX.Element {
                 type="text"
                 placeholder="Введіть назву дошки"
                 name="boardTitle"
+                maxLength={16}
+                minLength={1}
                 required
                 onChange={(event) => setColumnTitle(event?.target.value)}
               />
@@ -129,6 +131,8 @@ export default function Board(): JSX.Element {
                 type="text"
                 placeholder="Введіть назву колонки"
                 name="columnTitle"
+                maxLength={16}
+                minLength={1}
                 required
                 onChange={(event) => setColumnTitle(event?.target.value)}
               />

@@ -148,6 +148,8 @@ export default function BoardColumn({ id, title, cards }: IBoardColumn): JSX.Ele
                 className="form__input"
                 type="text"
                 placeholder="Введіть назву картки"
+                maxLength={16}
+                minLength={1}
                 required
                 onChange={(event) => setCardTitle(event?.target.value)}
               />

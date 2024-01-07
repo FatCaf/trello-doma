@@ -68,6 +68,8 @@ export default function AddBoardModal(): JSX.Element {
                 placeholder="Введіть назву дошки"
                 required
                 name="title"
+                maxLength={16}
+                minLength={1}
                 onChange={(event) => {
                   setBoardName(event.target.value);
                 }}
