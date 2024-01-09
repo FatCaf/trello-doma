@@ -67,7 +67,12 @@ button {
 }
 
 .container {
-  max-width: 1000px;
+  max-width: 1900px;
   margin: 0 auto;
   padding: 0 15px;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
 }
