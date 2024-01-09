@@ -4,7 +4,7 @@ import preview from '../assets/preview.png';
 import '../styles/AddBoardModal.scss';
 import { useAppDispatch } from '../store/hooks';
 import { BoardPreviewTile } from '../models/models';
-import { addBoard } from '../store/slices/homeSlice';
+import { addBoard, fetchBoards } from '../store/slices/homeSlice';
 import { closeModal } from '../store/slices/modalSlice';
 
 export default function AddBoardModal(): JSX.Element {
@@ -28,6 +28,8 @@ export default function AddBoardModal(): JSX.Element {
         },
       };
       await dispatch(addBoard(postData));
+      dispatch(closeModal());
+      await dispatch(fetchBoards());
     } catch (e: unknown) {
       const error = e as string;
       throw new Error(error);

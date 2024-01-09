@@ -13,7 +13,6 @@ const Settings = memo((): JSX.Element => {
   const dispatch = useAppDispatch();
   const { boardId } = useParams<{ boardId: string }>();
   const title = useAppSelector((state) => state.board.board.title);
-  const isOpen = useAppSelector((state) => state.modal.isOpen);
 
   const handleClick = async (event: React.MouseEvent<HTMLDivElement>): Promise<void> => {
     const clickedColor = getComputedStyle(event.currentTarget).backgroundColor;
@@ -36,10 +35,10 @@ const Settings = memo((): JSX.Element => {
   };
 
   return (
-    <div className={`settings__window ${isOpen ? 'opened' : 'closed'}`}>
+    <div className="settings__window">
       <div className="settings__header">
         <h4>Змінити колір</h4>
-        <div className="cancel" onClick={() => dispatch(closeModal())}>
+        <div className="close" onClick={() => dispatch(closeModal())}>
           <span>X</span>
         </div>
       </div>
