@@ -14,15 +14,11 @@ export default function Home(): JSX.Element {
   const dispatch = useAppDispatch();
   const { status } = useAppSelector((state) => state.boards);
   const { boards } = useAppSelector((state) => state.boards);
-  const isOpen = useAppSelector((state) => state.modal.isOpen);
+  const { modals } = useAppSelector((state) => state.modal);
 
   useEffect(() => {
     dispatch(fetchBoards());
   }, [dispatch]);
-
-  const handleChanges = async (): Promise<void> => {
-    dispatch(fetchBoards());
-  };
 
   const handleDelete = (event: React.MouseEvent<HTMLDivElement>): void => {
     const name = event.currentTarget.getAttribute('data-name');
@@ -37,7 +33,7 @@ export default function Home(): JSX.Element {
             try {
               await dispatch(deleteBoard(boardId));
               if (status !== 'rejected') {
-                handleChanges();
+                await dispatch(fetchBoards());
               }
             } catch (e: unknown) {
               const error = e as string;
@@ -52,6 +48,11 @@ export default function Home(): JSX.Element {
         },
       ],
     });
+  };
+
+  const handleModalClick = (modal: string | null, event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
+    event.stopPropagation();
+    dispatch(openModal({ modalName: modal }));
   };
 
   return (
@@ -73,13 +74,17 @@ export default function Home(): JSX.Element {
                 </div>
               </div>
             ))}
-          <div className="add__board" onClick={() => dispatch(openModal())}>
+          <div
+            data-name="add-board"
+            className="add__board"
+            onClick={(event) => handleModalClick(event.currentTarget.getAttribute('data-name'), event)}
+          >
             <p>
               <span>+</span> Додати нову дошку
             </p>
           </div>
         </div>
-        {isOpen && <AddBoardModal />}
+        {modals[0]?.modalName === 'add-board' && <AddBoardModal />}
       </div>
     </div>
   );
