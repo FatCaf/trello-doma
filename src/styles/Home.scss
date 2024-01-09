@@ -8,9 +8,7 @@
   flex-direction: column;
   height: 95.4vh;
   & .home__title {
-    align-self: stretch;
-    margin-left: 3.4375rem;
-    margin-bottom: 2.5rem;
+    padding: 40px;
     color: $main-text-color;
     font-size: 1.25rem;
     font-weight: 700;
@@ -49,6 +47,9 @@
 .board__link {
   position: relative;
   z-index: 999;
+  &.current {
+    background: rgba(0, 0, 0, 0.8);
+  }
 }
 
 .board__delete {

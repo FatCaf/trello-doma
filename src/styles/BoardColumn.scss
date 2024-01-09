@@ -6,6 +6,8 @@
   border-radius: 8px;
   margin-right: 0.625rem;
   background-color: $tile-bgc;
+  max-width: 33.3%;
+  min-width: 20%;
   &:last-child {
     margin-right: 0;
   }
@@ -30,7 +32,8 @@
 }
 
 .column__title {
-  padding: 0 0.3125rem;
+  padding: 5px 5px;
+  margin-bottom: 10px;
   cursor: pointer;
   color: $main-text-color;
   &:hover {

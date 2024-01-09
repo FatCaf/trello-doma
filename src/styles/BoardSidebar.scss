@@ -1,0 +1,78 @@
+@import './variables.scss';
+@import './mixines.scss';
+
+.sidebar {
+  border-right: 1px solid gray;
+  height: 95.4vh;
+  background-color: transparent;
+  background: rgba(0, 0, 0, 0.2);
+  position: relative;
+  flex-grow: 0.2;
+}
+
+.sidebar__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: transparent;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid gray;
+}
+
+.sidebar__title {
+  color: $tile-bgc;
+  padding: 10px 10px;
+}
+
+.sidebar__add {
+  margin-right: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+  &:hover {
+    @include setBackgroundHoveColor($main-text-color, 0.4);
+    border-radius: 8px;
+  }
+}
+
+.sidebar__boards {
+  padding: 0.625rem 0.625rem;
+  display: flex;
+  align-items: self-start;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.625rem;
+}
+
+.hide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  padding: 10px;
+  background-color: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+  & div {
+    height: 10px;
+    width: 10px;
+    transform: rotate(45deg);
+  }
+  &:hover {
+    @include setBackgroundHoveColor($main-text-color, 0.6);
+  }
+}
+
+.hidden {
+  transition: transform 0.3s linear;
+  transform: translateX(-90%);
+}
+
+.showed {
+  transition: transform 0.3s linear;
+  transform: translateX(0);
+}

@@ -1,31 +1,38 @@
 @import './variables.scss';
+@import './mixines.scss';
 
 .board {
   position: relative;
   display: flex;
-  justify-content: center;
-  align-items: start;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .board__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  color: $secondary-text-color;
+  color: $tile-bgc;
   padding: 0.625rem 0.625rem;
   background-color: transparent;
   border-bottom: 1px solid gray;
   background: rgba(0, 0, 0, 0.4);
+  width: 100%;
   & h2 {
     cursor: pointer;
     padding: 0 0.3125rem;
   }
   & h2:hover {
     border-radius: 4px;
-    background: rgba(0, 0, 0, 0.2);
+    @include setBackgroundHoveColor($main-text-color, 0.4);
   }
+}
+
+.board__main__content {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+  flex-grow: 1;
 }
 
 .settings {
@@ -37,16 +44,17 @@
   justify-content: center;
   align-items: center;
   &:hover {
-    background: rgba(0, 0, 0, 0.2);
+    @include setBackgroundHoveColor($main-text-color, 0.4);
   }
 }
 
 .columns {
   margin-top: 0.9375rem;
-  padding: 0 0.3125rem;
+  padding: 0 0.625rem;
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: start;
+  width: 100%;
 }
 
 .add__column {
@@ -61,5 +69,41 @@
   }
   &:hover {
     background: rgba($color: #fff, $alpha: 0.6);
+  }
+}
+
+.bars {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+  transform: translateY(0);
+  transition:
+    transform 0.2s linear,
+    opacity 0.2s linear;
+
+  &.active {
+    transform: translateY(230%);
+    opacity: 0;
+  }
+}
+
+.bar {
+  background-color: $tile-bgc;
+  width: 20px;
+  height: 2px;
+  border-radius: 4px;
+}
+
+@keyframes slide-down {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    display: none;
+  }
+  100% {
+    transform: translateY(230%);
   }
 }
