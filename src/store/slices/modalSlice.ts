@@ -1,23 +1,30 @@
 /* eslint-disable no-param-reassign */
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface IModal {
-  isOpen: boolean;
+  modals: {
+    modalName: string | null;
+  }[];
 }
 
 const initialState: IModal = {
-  isOpen: false,
+  modals: [],
 };
+
+interface OpenModalAction extends PayloadAction<{ modalName: string | null }> {}
 
 const ModalSlice = createSlice({
   name: 'modal',
   initialState,
   reducers: {
-    openModal: (state) => {
-      state.isOpen = true;
+    openModal: (state, action: OpenModalAction) => {
+      const name = action.payload.modalName;
+      if (state.modals.length > 0) state.modals = [];
+
+      state.modals.push({ modalName: name });
     },
     closeModal: (state) => {
-      state.isOpen = false;
+      state.modals = [];
     },
   },
 });
