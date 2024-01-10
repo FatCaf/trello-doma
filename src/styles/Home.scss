@@ -6,7 +6,7 @@
   align-items: center;
   background-color: $tile-bgc;
   flex-direction: column;
-  height: 95.4vh;
+  margin-bottom: 250px;
   & .home__title {
     padding: 40px;
     color: $main-text-color;
@@ -21,7 +21,6 @@
   column-gap: 1.25rem;
   row-gap: 1.25rem;
   padding: 5px 0;
-  margin-bottom: 6.25rem;
 }
 
 .add__board {
@@ -47,8 +46,9 @@
 .board__link {
   position: relative;
   z-index: 999;
-  &.current {
-    background: rgba(0, 0, 0, 0.8);
+  transition: transform 0.3s linear;
+  &.veiled {
+    transform: translateX(-110%);
   }
 }
 
@@ -67,5 +67,22 @@
   &:hover {
     background-color: $tile-bgc;
     opacity: 0.7;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .board__grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .home__title h2 {
+    font-size: 24px;
+  }
+
+  .home {
+    margin-bottom: 0;
   }
 }

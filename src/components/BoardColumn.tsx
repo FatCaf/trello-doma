@@ -132,7 +132,7 @@ export default function BoardColumn({ id, title, cards }: IBoardColumn): JSX.Ele
           )}
         </div>
         <div className="column__delete" id={`${id}`} data-name={title} onClick={handleDelete}>
-          <span>X</span>
+          <div>X</div>
         </div>
       </div>
       <div className="column__cards">

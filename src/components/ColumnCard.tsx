@@ -52,7 +52,7 @@ export default function ColumnCard({ id, title }: IColumnCard): JSX.Element {
         <h4>{title}</h4>
       </div>
       <div className="card__delete" id={`${id}`} data-name={title} onClick={handleDelete}>
-        <span>X</span>
+        <div>X</div>
       </div>
     </div>
   );

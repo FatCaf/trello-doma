@@ -5,6 +5,8 @@
   position: relative;
   display: flex;
   flex-direction: row;
+  height: 100%;
+  overflow: hidden;
 }
 
 .board__header {
@@ -19,7 +21,6 @@
   width: 100%;
   & h2 {
     cursor: pointer;
-    padding: 0 0.3125rem;
   }
   & h2:hover {
     border-radius: 4px;
@@ -27,12 +28,29 @@
   }
 }
 
-.board__main__content {
+.board__wrapper {
   display: flex;
   flex-direction: column;
   align-items: start;
   justify-content: start;
   flex-grow: 1;
+}
+
+.board__main__content {
+  overflow-x: auto;
+  width: 100%;
+  flex-grow: 1;
+  padding: 0 6px;
+}
+
+.board__main__content::-webkit-scrollbar {
+  width: 12px;
+}
+
+.board__main__content::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
 }
 
 .settings {
@@ -50,11 +68,21 @@
 
 .columns {
   margin-top: 0.9375rem;
-  padding: 0 0.625rem;
   display: flex;
   justify-content: start;
   align-items: start;
   width: 100%;
+  white-space: nowrap;
+  & li {
+    flex-shrink: 0;
+    width: 20%;
+    padding: 0 6px;
+    display: block;
+  }
+}
+
+.add__column__wrapper {
+  padding: 0 6px;
 }
 
 .add__column {
@@ -64,6 +92,7 @@
   border-radius: 0.5rem;
   padding: 0.3125rem 10px;
   color: $secondary-text-color;
+  width: 100%;
   & span {
     font-size: 1.125rem;
   }
@@ -96,14 +125,58 @@
   border-radius: 4px;
 }
 
-@keyframes slide-down {
-  0% {
+.container-head-board {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 5px;
+}
+
+.hide.onboard {
+  display: none;
+  position: static;
+}
+
+@media screen and (max-width: 500px) {
+  .container-head-board {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    width: 100%;
+    padding: 0 5px;
+  }
+
+  .board__main__content::-webkit-scrollbar {
+    width: 0;
+  }
+
+  .columns {
+    flex-direction: column;
+    gap: 10px;
+    & li {
+      width: 100%;
+    }
+  }
+
+  .add__column__wrapper {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 15px;
+  }
+
+  .settings {
+    @include setBackgroundHoveColor($main-text-color, 0.6);
+  }
+
+  .bars.active {
+    opacity: 1;
     transform: translateY(0);
   }
-  50% {
-    display: none;
-  }
-  100% {
-    transform: translateY(230%);
+
+  .hide.onboard {
+    display: block;
+    @include setBackgroundHoveColor($main-text-color, 0.6);
   }
 }

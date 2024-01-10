@@ -6,11 +6,12 @@
 }
 
 .react-confirm-alert {
-  position: absolute;
+  position: fixed;
   margin-top: 9.375rem;
   top: 0;
   left: 50%;
   transform: translate(-50%, -50%); /* Center horizontally and vertically */
+  z-index: 999;
 }
 
 .react-confirm-alert-body {
@@ -49,5 +50,11 @@
     &:hover {
       @include setBackgroundHoveColor($no-color, 0.8);
     }
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .react-confirm-alert {
+    top: 5%;
   }
 }

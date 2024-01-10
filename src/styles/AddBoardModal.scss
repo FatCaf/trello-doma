@@ -4,13 +4,13 @@
 .wrapper {
   position: absolute;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
   top: 0;
-  bottom: 0;
+  left: 0;
   z-index: 999;
 }
 .add__window {
@@ -53,9 +53,11 @@
   cursor: pointer;
   align-self: end;
   padding: 0 0.4375rem;
-  background-color: $no-color;
+  box-shadow: 0 0 5px gray;
   &:hover {
-    @include setBackgroundHoveColor($no-color, 0.8);
+    @include setBackgroundHoveColor($border-hover-color, 0.6);
+    color: $tile-bgc;
+    box-shadow: none;
   }
 }
 
@@ -63,18 +65,31 @@
   padding: 0.625rem 0.9375rem;
   cursor: pointer;
   margin-top: 0.625rem;
-  background-color: $yes-color;
   border-radius: 4px;
   width: 100%;
   color: $main-text-color;
   font-size: 18px;
   box-shadow: 0 0 5px gray;
   &:hover {
-    @include setBackgroundHoveColor($yes-color, 0.8);
     box-shadow: none;
   }
 }
 
 .input__block {
   align-self: start;
+}
+
+@media screen and (max-width: 500px) {
+  .wrapper {
+    background: none;
+  }
+
+  .add__window {
+    box-shadow: 0 0 5px gray;
+  }
+
+  .add.large {
+    @include setBackgroundHoveColor($border-hover-color, 0.6);
+    color: $tile-bgc;
+  }
 }

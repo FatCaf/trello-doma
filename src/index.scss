@@ -9,6 +9,7 @@ body {
   margin: 0;
   font-family: 'Nunito', sans-serif;
   background-color: $tile-bgc;
+  height: 100vh;
 }
 
 h1,
@@ -22,6 +23,7 @@ p {
 }
 
 ul,
+ol,
 li {
   list-style: none;
   margin: 0;
@@ -75,4 +77,13 @@ button {
 #root {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+@media screen and (max-width: 500px) {
+  .add {
+    @include setBackgroundHoveColor($border-hover-color, 0.6);
+    color: $tile-bgc;
+  }
 }

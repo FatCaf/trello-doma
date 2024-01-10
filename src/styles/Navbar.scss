@@ -3,19 +3,22 @@
 
 .header {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid gray;
+  padding: 5px;
+}
+
+.navbar__wrapper {
+  gap: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .title {
   color: $main-text-color;
-  padding: 0 15px;
   cursor: pointer;
-}
-
-.navbar {
-  margin-left: 15.625rem;
 }
 
 .nav__list {
@@ -25,7 +28,7 @@
 }
 
 .nav__item {
-  padding: 0.3125rem 0.625rem;
+  padding: 3px;
   border-radius: 4px;
   & a {
     color: $main-text-color;
@@ -36,5 +39,28 @@
   }
   &:hover {
     @include setBackgroundHoveColor(gray, 0.4);
+  }
+}
+
+.container.head {
+  margin: 0;
+}
+
+@media screen and (max-width: 500px) {
+  .title {
+    font-size: 12px;
+  }
+
+  .navbar__wrapper {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .nav__item {
+    background-color: $main-text-color;
+    padding: 5px;
+    & a {
+      color: $tile-bgc;
+    }
   }
 }

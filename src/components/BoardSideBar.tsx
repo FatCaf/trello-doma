@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { deleteBoard, fetchBoards } from '../store/slices/homeSlice';
@@ -12,7 +12,6 @@ import AddBoardModal from './AddBoardModal';
 export default function BoardSideBar(): JSX.Element {
   const dispatch = useAppDispatch();
   const [isHidden, setHidden] = useState(false);
-  const { boardId } = useParams<{ boardId: string }>();
   const { status } = useAppSelector((state) => state.boards);
   const { boards } = useAppSelector((state) => state.boards);
   const { modals } = useAppSelector((state) => state.modal);
@@ -57,13 +56,14 @@ export default function BoardSideBar(): JSX.Element {
   };
 
   return (
-    <div className={`sidebar ${isHidden ? 'hidden' : 'showed'}`}>
+    <aside className={`sidebar ${isHidden ? 'hidden' : 'showed'} onboard`}>
       <div
-        className="hide"
+        className="hide onsidebar"
         onClick={() => {
           if (isHidden) setHidden(!isHidden);
           setHidden(!isHidden);
         }}
+        style={isHidden ? { right: '0' } : {}}
       >
         <div
           className="arrow"
@@ -75,22 +75,23 @@ export default function BoardSideBar(): JSX.Element {
         />
       </div>
       <div className="sidebar__header">
-        <div className="sidebar__title">
-          <h2>Мої дошки</h2>
-        </div>
-        <div
-          className="sidebar__add"
-          data-name="add-board"
-          onClick={(event) => handleModalClick(event.currentTarget.getAttribute('data-name'), event)}
-          style={isHidden ? { display: 'none' } : {}}
-        >
-          <img src={addSvg} alt="Додати" />
+        <div className={isHidden ? 'header__wrapper veiled' : 'header__wrapper'}>
+          <div className="sidebar__title">
+            <h2>Мої дошки</h2>
+          </div>
+          <div
+            className="sidebar__add"
+            data-name="add-board"
+            onClick={(event) => handleModalClick(event.currentTarget.getAttribute('data-name'), event)}
+          >
+            <img src={addSvg} alt="Додати" />
+          </div>
         </div>
       </div>
-      <div className="sidebar__boards">
+      <div className="sidebar__boards" style={isHidden ? { overflow: 'hidden' } : {}}>
         {boards &&
           boards.map((board) => (
-            <div className={`board__link ${board.id === boardId ? 'current' : ''}`} key={board.id}>
+            <div className={isHidden ? 'board__link veiled' : 'board__link'} key={board.id}>
               <Link to={`/board/${board.id}`} key={board.id}>
                 <BoardPreview {...board} key={board.id} />
               </Link>
@@ -101,6 +102,6 @@ export default function BoardSideBar(): JSX.Element {
           ))}
       </div>
       {modals[0]?.modalName === 'add-board' && <AddBoardModal />}
-    </div>
+    </aside>
   );
 }

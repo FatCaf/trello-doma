@@ -26,7 +26,7 @@ export default function Board(): JSX.Element {
   const { modals } = useAppSelector((state) => state.modal);
   const addColumnRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
-
+  const [isHidden, setHidden] = useState(false);
   useEffect(() => {
     dispatch(fetchBoard(boardId));
   }, [boardId, dispatch]);
@@ -94,74 +94,102 @@ export default function Board(): JSX.Element {
 
   return (
     <div className="board" key={boardId} id={`${boardId}`}>
-      {status === 'loading' && <BoardLoader />}
       {status === 'rejected' && <BoardError />}
       <BoardSideBar />
-      <div className="board__main__content">
+      {status === 'loading' && <BoardLoader />}
+      <div className="board__wrapper">
         <div className="board__header">
-          <div id={`${boardId}`} ref={titleRef} onClick={(event) => handleInputClick(event.currentTarget.id, event)}>
-            {inputs[0]?.id === `${boardId}` ? (
-              <form onSubmit={handleEdit} name="boardTitle" className="input__form">
-                <input
-                  className="form__input"
-                  type="text"
-                  placeholder="Введіть назву дошки"
-                  name="boardTitle"
-                  maxLength={16}
-                  minLength={1}
-                  required
-                  onChange={(event) => setColumnTitle(event?.target.value)}
-                />
-                <button className="add" type="submit">
-                  Змінити
-                </button>
-              </form>
-            ) : (
-              <h2>{board.title}</h2>
-            )}
-          </div>
-          <div
-            data-name="settings"
-            className="settings"
-            onClick={(event) => handleModalClick(event.currentTarget.getAttribute('data-name'), event)}
-          >
-            <div className={`bars ${modals[0]?.modalName === 'settings' ? 'active' : ''}`}>
-              <div className="top bar" />
-              <div className="mid bar" />
-              <div className="bottom bar" />
+          <div className="container-head-board">
+            <div
+              className="hide onboard"
+              onClick={() => {
+                if (isHidden) setHidden(!isHidden);
+                setHidden(!isHidden);
+              }}
+              style={isHidden ? { right: '0' } : {}}
+            >
+              <div
+                className="arrow"
+                style={
+                  !isHidden
+                    ? { borderBottom: '2px solid #f1f2f4', borderLeft: '2px solid #f1f2f4' }
+                    : { borderTop: '2px solid #f1f2f4', borderRight: '2px solid #f1f2f4' }
+                }
+              />
+            </div>
+            <div id={`${boardId}`} ref={titleRef} onClick={(event) => handleInputClick(event.currentTarget.id, event)}>
+              {inputs[0]?.id === `${boardId}` ? (
+                <form onSubmit={handleEdit} name="boardTitle" className="input__form">
+                  <input
+                    className="form__input"
+                    type="text"
+                    placeholder="Введіть назву дошки"
+                    name="boardTitle"
+                    maxLength={16}
+                    minLength={1}
+                    required
+                    onChange={(event) => setColumnTitle(event?.target.value)}
+                  />
+                  <button className="add" type="submit">
+                    Змінити
+                  </button>
+                </form>
+              ) : (
+                <h2>{board.title}</h2>
+              )}
+            </div>
+            <div
+              data-name="settings"
+              className="settings"
+              onClick={(event) => handleModalClick(event.currentTarget.getAttribute('data-name'), event)}
+            >
+              <div className={`bars ${modals[0]?.modalName === 'settings' ? 'active' : ''}`}>
+                <div className="top bar" />
+                <div className="mid bar" />
+                <div className="bottom bar" />
+              </div>
             </div>
           </div>
         </div>
-        <div className="columns" key="columns">
-          {lists && lists.map((list) => <BoardColumn {...list} key={list?.id} />)}
-          <div
-            className="add__column"
-            id={`${typeof boardId === 'number' ? boardId : (boardId as never) + 1}`}
-            ref={addColumnRef}
-            onClick={(event) => handleInputClick(event.currentTarget.id, event)}
-          >
-            {inputs[0]?.id === `${typeof boardId === 'number' ? boardId : (boardId as never) + 1}` ? (
-              <form onSubmit={handleAdd} name="columnTitle" className="input__form">
-                <input
-                  className="form__input"
-                  type="text"
-                  placeholder="Введіть назву колонки"
-                  name="columnTitle"
-                  maxLength={16}
-                  minLength={1}
-                  required
-                  onChange={(event) => setColumnTitle(event?.target.value)}
-                />
-                <button className="add" type="submit">
-                  Додати
-                </button>
-              </form>
-            ) : (
-              <p>
-                <span>+</span> Додати нову колонку
-              </p>
-            )}
-          </div>
+        <div className="board__main__content">
+          <ol className="columns" key="columns">
+            {lists &&
+              lists.map((list) => (
+                <li>
+                  <BoardColumn {...list} key={list?.id} />
+                </li>
+              ))}
+            <div className="add__column__wrapper">
+              <div
+                className="add__column"
+                id={`${typeof boardId === 'number' ? boardId : (boardId as never) + 1}`}
+                ref={addColumnRef}
+                onClick={(event) => handleInputClick(event.currentTarget.id, event)}
+              >
+                {inputs[0]?.id === `${typeof boardId === 'number' ? boardId : (boardId as never) + 1}` ? (
+                  <form onSubmit={handleAdd} name="columnTitle" className="input__form">
+                    <input
+                      className="form__input"
+                      type="text"
+                      placeholder="Введіть назву колонки"
+                      name="columnTitle"
+                      maxLength={16}
+                      minLength={1}
+                      required
+                      onChange={(event) => setColumnTitle(event?.target.value)}
+                    />
+                    <button className="add" type="submit">
+                      Додати
+                    </button>
+                  </form>
+                ) : (
+                  <p>
+                    <span>+</span> Додати нову колонку
+                  </p>
+                )}
+              </div>
+            </div>
+          </ol>
         </div>
         {modals[0]?.modalName === 'settings' && <Settings />}
       </div>

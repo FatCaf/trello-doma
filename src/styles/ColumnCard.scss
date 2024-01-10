@@ -26,11 +26,15 @@
 .card__delete {
   cursor: pointer;
   color: $main-text-color;
-  &:hover {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  &:hover div {
     @include setBackgroundHoveColor(gray, 0.2);
     border-radius: 4px;
   }
-  & span {
+  & div {
     font-size: 1.125rem;
+    padding: 3px;
   }
 }

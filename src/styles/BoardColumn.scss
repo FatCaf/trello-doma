@@ -4,38 +4,39 @@
 .column {
   padding: 0.625rem 0.3125rem;
   border-radius: 8px;
-  margin-right: 0.625rem;
   background-color: $tile-bgc;
-  max-width: 33.3%;
-  min-width: 20%;
-  &:last-child {
-    margin-right: 0;
-  }
 }
 
 .column__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .column__delete {
   cursor: pointer;
   color: $main-text-color;
-  &:hover {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  & div {
+    padding: 3px;
+    font-size: 1.125rem;
+  }
+  &:hover div {
     @include setBackgroundHoveColor(gray, 0.2);
     border-radius: 4px;
-  }
-  & span {
-    font-size: 1.125rem;
   }
 }
 
 .column__title {
   padding: 5px 5px;
-  margin-bottom: 10px;
   cursor: pointer;
   color: $main-text-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   &:hover {
     @include setBackgroundHoveColor(gray, 0.2);
     border-radius: 4px;
