@@ -5,6 +5,8 @@
   padding: 0.625rem 0.3125rem;
   border-radius: 8px;
   background-color: $tile-bgc;
+  flex-shrink: 0;
+  box-shadow: 0 0 5px gray;
 }
 
 .column__header {
@@ -66,5 +68,15 @@
   }
   & span {
     font-size: 1.125rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .column {
+    width: 100%;
+  }
+
+  .column__delete {
+    visibility: inherit;
   }
 }

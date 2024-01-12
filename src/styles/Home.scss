@@ -6,7 +6,7 @@
   align-items: center;
   background-color: $tile-bgc;
   flex-direction: column;
-  margin-bottom: 250px;
+  margin-top: 150px;
   & .home__title {
     padding: 40px;
     color: $main-text-color;
@@ -50,6 +50,9 @@
   &.veiled {
     transform: translateX(-110%);
   }
+  &:hover .board__delete {
+    visibility: initial;
+  }
 }
 
 .board__delete {
@@ -64,6 +67,7 @@
   border-top-right-radius: 8px;
   border-bottom-left-radius: 8px;
   transition: background-color 0.3s linear;
+  visibility: hidden;
   &:hover {
     background-color: $tile-bgc;
     opacity: 0.7;
@@ -71,11 +75,19 @@
 }
 
 @media screen and (max-width: 500px) {
+  .home {
+    margin: 0;
+  }
+
   .board__grid {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+  }
+
+  .board__delete {
+    visibility: initial;
   }
 
   .home__title h2 {

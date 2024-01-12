@@ -7,12 +7,12 @@ import '../styles/Board.scss';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { addColumn, fetchBoard } from '../store/slices/boardSlice';
 import { IColumnPost } from '../models/models';
-// import { openModal } from '../store/slices/modalSlice';
 import BoardLoader from '../components/BoardLoader';
 import BoardError from '../components/BoardError';
 import BoardSideBar from '../components/BoardSideBar';
 import InputField from '../components/InputField';
 import BoardHeader from '../components/BoardHeader';
+import MobileSidebar from '../components/MobileSidebar';
 
 export default function Board(): JSX.Element {
   const [title, setTitle] = useState('Безіменна колонка');
@@ -57,26 +57,17 @@ export default function Board(): JSX.Element {
     }
   };
 
-  // const handleModalClick = (modal: string | null, event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
-  //   event.stopPropagation();
-  //   dispatch(openModal({ modalName: modal }));
-  // };
-
   return (
     <div className="board" key={boardId} id={`${boardId}`}>
       {status === 'rejected' && <BoardError />}
       <BoardSideBar />
+      {modals[0]?.modalName === 'mobile-sidebar' && <MobileSidebar />}
       {status === 'loading' && <BoardLoader />}
       <div className="board__wrapper">
         <BoardHeader boardTitle={board.title} backgroundColor={backgroundColor} />
         <div className="board__main__content">
-          <ol className="columns" key="columns">
-            {lists &&
-              lists.map((list) => (
-                <li key={list?.id}>
-                  <BoardColumn {...list} key={list?.id} />
-                </li>
-              ))}
+          <div className="columns" key="columns">
+            {lists && lists.map((list) => <BoardColumn {...list} key={list?.id} />)}
             <div className="add__column__wrapper">
               <div className="add__column">
                 {isAddColumnClicked ? (
@@ -95,7 +86,7 @@ export default function Board(): JSX.Element {
                 )}
               </div>
             </div>
-          </ol>
+          </div>
         </div>
         {modals[0]?.modalName === 'settings' && <Settings />}
       </div>

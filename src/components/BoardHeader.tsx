@@ -8,7 +8,6 @@ import { openModal } from '../store/slices/modalSlice';
 
 export default function BoardHeader({ boardTitle, backgroundColor }: IBoardHeader): JSX.Element {
   const dispatch = useAppDispatch();
-  const [isHidden, setHidden] = useState(false);
   const [title, setTitle] = useState('Безіменна дошка');
   const { modals } = useAppSelector((state) => state.modal);
   const [isTitleClicked, setTitleClicked] = useState(false);
@@ -49,20 +48,10 @@ export default function BoardHeader({ boardTitle, backgroundColor }: IBoardHeade
       <div className="container-head-board">
         <div
           className="hide onboard"
-          onClick={() => {
-            if (isHidden) setHidden(!isHidden);
-            setHidden(!isHidden);
-          }}
-          style={isHidden ? { right: '0' } : {}}
+          data-name="mobile-sidebar"
+          onClick={(event) => handleModalClick(event.currentTarget.getAttribute('data-name'), event)}
         >
-          <div
-            className="arrow"
-            style={
-              !isHidden
-                ? { borderBottom: '2px solid #f1f2f4', borderLeft: '2px solid #f1f2f4' }
-                : { borderTop: '2px solid #f1f2f4', borderRight: '2px solid #f1f2f4' }
-            }
-          />
+          <div className="arrow" style={{ borderTop: '2px solid #f1f2f4', borderRight: '2px solid #f1f2f4' }} />
         </div>
         <div>
           {isTitleClicked ? (

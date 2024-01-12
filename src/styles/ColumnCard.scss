@@ -2,7 +2,8 @@
 @import './mixines.scss';
 
 .card {
-  border: 2px solid grey;
+  border: 2px solid transparent;
+  box-shadow: 0 0 5px gray;
   border-radius: 6px;
   width: 100%;
   margin-bottom: 0.625rem;
@@ -11,7 +12,8 @@
   align-items: center;
   cursor: pointer;
   &:hover {
-    border-color: blue;
+    border: 2px solid blue;
+    box-shadow: none;
   }
   &:hover .card__delete {
     visibility: inherit;
@@ -42,5 +44,11 @@
     transition: background-color 0.2s linear;
     font-size: 1.125rem;
     padding: 4px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .card__delete {
+    visibility: initial;
   }
 }

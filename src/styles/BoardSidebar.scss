@@ -100,30 +100,3 @@
   background: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 }
-
-@media screen and (max-width: 500px) {
-  .sidebar {
-    display: none;
-  }
-
-  .sidebar.onboard {
-    display: block;
-    position: absolute;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    top: 6%;
-  }
-
-  .sidebar__boards {
-    align-items: center;
-    height: 100vh;
-  }
-
-  .sidebar__boards::-webkit-scrollbar {
-    width: 0;
-  }
-
-  .hide.onsidebar {
-    visibility: hidden;
-  }
-}

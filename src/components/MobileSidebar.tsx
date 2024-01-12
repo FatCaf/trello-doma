@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
+import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { deleteBoard, fetchBoards } from '../store/slices/homeSlice';
-import '../styles/BoardSidebar.scss';
+import { closeModal, openModal } from '../store/slices/modalSlice';
 import BoardPreview from './BoardPreview';
-import { openModal } from '../store/slices/modalSlice';
-import addSvg from '../assets/add.svg';
 import AddBoardModal from './AddBoardModal';
+import addSvg from '../assets/add.svg';
+import '../styles/MobileSidebar.scss';
 
-export default function BoardSideBar(): JSX.Element {
+export default function MobileSidebar(): JSX.Element {
   const dispatch = useAppDispatch();
   const [isHidden, setHidden] = useState(false);
   const { status } = useAppSelector((state) => state.boards);
@@ -56,23 +56,15 @@ export default function BoardSideBar(): JSX.Element {
   };
 
   return (
-    <aside className={`sidebar ${isHidden ? 'hidden' : 'showed'}`}>
+    <aside className={`sidebar ${modals[0]?.modalName === 'mobile-sidebar' ? 'showed' : 'hidden'} onboard`}>
       <div
-        className="hide"
+        className="hide onsidebar"
         onClick={() => {
-          if (isHidden) setHidden(!isHidden);
-          setHidden(!isHidden);
+          dispatch(closeModal());
+          setHidden(false);
         }}
-        style={isHidden ? { right: '0' } : {}}
       >
-        <div
-          className="arrow"
-          style={
-            !isHidden
-              ? { borderBottom: '2px solid #f1f2f4', borderLeft: '2px solid #f1f2f4' }
-              : { borderTop: '2px solid #f1f2f4', borderRight: '2px solid #f1f2f4' }
-          }
-        />
+        <div className="arrow" style={{ borderBottom: '2px solid #f1f2f4', borderLeft: '2px solid #f1f2f4' }} />
       </div>
       <div className="sidebar__header">
         <div className={isHidden ? 'header__wrapper veiled' : 'header__wrapper'}>
