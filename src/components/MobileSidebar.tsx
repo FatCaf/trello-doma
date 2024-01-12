@@ -3,7 +3,7 @@ import { confirmAlert } from 'react-confirm-alert';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { deleteBoard, fetchBoards } from '../store/slices/homeSlice';
-import { closeModal, openModal } from '../store/slices/modalSlice';
+import { closeModal } from '../store/slices/modalSlice';
 import BoardPreview from './BoardPreview';
 import AddBoardModal from './AddBoardModal';
 import addSvg from '../assets/add.svg';
@@ -15,6 +15,7 @@ export default function MobileSidebar(): JSX.Element {
   const { status } = useAppSelector((state) => state.boards);
   const { boards } = useAppSelector((state) => state.boards);
   const { modals } = useAppSelector((state) => state.modal);
+  const [tempClick, setTempClick] = useState(false);
 
   useEffect(() => {
     dispatch(fetchBoards());
@@ -50,10 +51,10 @@ export default function MobileSidebar(): JSX.Element {
     });
   };
 
-  const handleModalClick = (modal: string | null, event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
-    event.stopPropagation();
-    dispatch(openModal({ modalName: modal }));
-  };
+  // const handleModalClick = (modal: string | null, event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
+  //   event.stopPropagation();
+  //   dispatch(openModal({ modalName: modal }));
+  // };
 
   return (
     <aside className={`sidebar ${modals[0]?.modalName === 'mobile-sidebar' ? 'showed' : 'hidden'} onboard`}>
@@ -74,7 +75,10 @@ export default function MobileSidebar(): JSX.Element {
           <div
             className="sidebar__add"
             data-name="add-board"
-            onClick={(event) => handleModalClick(event.currentTarget.getAttribute('data-name'), event)}
+            onClick={
+              () => setTempClick(true)
+              // (event) => handleModalClick(event.currentTarget.getAttribute('data-name'), event)
+            }
           >
             <img src={addSvg} alt="Додати" />
           </div>
@@ -93,7 +97,8 @@ export default function MobileSidebar(): JSX.Element {
             </div>
           ))}
       </div>
-      {modals[0]?.modalName === 'add-board' && <AddBoardModal />}
+      {/* {modals[0]?.modalName === 'add-board' && <AddBoardModal />} */}
+      {tempClick && <AddBoardModal />}
     </aside>
   );
 }
