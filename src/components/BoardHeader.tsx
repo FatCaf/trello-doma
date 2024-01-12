@@ -5,6 +5,7 @@ import InputField from './InputField';
 import { editBoard, fetchBoard } from '../store/slices/boardSlice';
 import { IBoardEdit, IBoardHeader } from '../models/models';
 import { openModal } from '../store/slices/modalSlice';
+import '../styles/BoardHeader.scss';
 
 export default function BoardHeader({ boardTitle, backgroundColor }: IBoardHeader): JSX.Element {
   const dispatch = useAppDispatch();
@@ -53,7 +54,7 @@ export default function BoardHeader({ boardTitle, backgroundColor }: IBoardHeade
         >
           <div className="arrow" style={{ borderTop: '2px solid #f1f2f4', borderRight: '2px solid #f1f2f4' }} />
         </div>
-        <div>
+        <div className="board__name">
           {isTitleClicked ? (
             <InputField
               buttonText="Змінити"

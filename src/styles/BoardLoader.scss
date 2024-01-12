@@ -124,3 +124,10 @@
     transform: scaleY(1);
   }
 }
+
+@media screen and (max-width: 500px) {
+  .anim__wrapper {
+    right: 0;
+    left: 0;
+  }
+}
