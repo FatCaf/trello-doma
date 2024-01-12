@@ -6,7 +6,7 @@
   top: 5.7%;
   right: 0;
   background-color: transparent;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.6);
   padding: 0.9375rem 1.5625rem;
   display: flex;
   flex-direction: column;
@@ -25,7 +25,7 @@
   & h4 {
     color: $tile-bgc;
   }
-  & span {
+  & div {
     color: $tile-bgc;
     font-weight: 700;
     font-size: 1.25rem;
@@ -34,9 +34,9 @@
 }
 
 .close {
-  padding: 0.3125rem;
+  padding: 0 5px;
   &:hover {
-    @include setBackgroundHoveColor($main-text-color, 0.4);
+    @include setBackgroundHoveColor(white, 0.4);
     border-radius: 8px;
   }
 }
@@ -63,5 +63,6 @@
   .settings__window {
     width: 100%;
     border-bottom-right-radius: 8px;
+    background: rgba(0, 0, 0, 0.9);
   }
 }

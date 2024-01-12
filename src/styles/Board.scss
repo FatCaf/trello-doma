@@ -43,11 +43,17 @@
   padding: 0 6px;
 }
 
-.board__main__content::-webkit-scrollbar {
+::-webkit-scrollbar {
+  height: 12px;
   width: 12px;
 }
 
-.board__main__content::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-track {
+  margin-block: 10px;
+  margin-inline: 10px;
+}
+
+::-webkit-scrollbar-thumb {
   background-color: transparent;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
@@ -71,11 +77,8 @@
   display: flex;
   justify-content: start;
   align-items: start;
-  width: 100%;
-  white-space: nowrap;
   & li {
     flex-shrink: 0;
-    width: 20%;
     padding: 0 6px;
     display: block;
   }

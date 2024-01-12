@@ -39,7 +39,7 @@ const Settings = memo((): JSX.Element => {
       <div className="settings__header">
         <h4>Змінити колір</h4>
         <div className="close" onClick={() => dispatch(closeModal())}>
-          <span>X</span>
+          <div>X</div>
         </div>
       </div>
       <hr />

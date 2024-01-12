@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import * as React from 'react';
 import { useParams } from 'react-router';
 import { confirmAlert } from 'react-confirm-alert';
@@ -6,21 +6,19 @@ import ColumnCard from './ColumnCard';
 import '../styles/BoardColumn.scss';
 import { IBoardColumn, IColumnCardPost, IColumnDelete, IColumnEdit } from '../models/models';
 import { addCard } from '../store/slices/cardSlice';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useAppDispatch } from '../store/hooks';
 import { deleteColumn, editColumn, fetchBoard } from '../store/slices/boardSlice';
-import { closeInput, openInput } from '../store/slices/inputSlice';
-import useOutsideClick from '../hooks/useOutsideClick';
+import InputField from './InputField';
 
 export default function BoardColumn({ id, title, cards }: IBoardColumn): JSX.Element {
   const { boardId } = useParams<{ boardId: string }>();
   const dispatch = useAppDispatch();
-  const inputs = useAppSelector((state) => state.input.inputs);
+  const [isColumnTitleClicked, setColumnTitleClicked] = useState(false);
+  const [isCardAddClicked, setCardAddClicked] = useState(false);
   const [cardTitle, setCardTitle] = useState('Безіменна картка');
   const [columnTitle, setColumnTitle] = useState('Безіменна колонка');
-  const cardRef = useRef<HTMLDivElement>(null);
-  const columnRef = useRef<HTMLDivElement>(null);
 
-  const handleAdd = async (event: React.MouseEvent<HTMLFormElement>): Promise<void> => {
+  const handleAdd = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     const listId = +event.currentTarget.id;
     try {
       event.preventDefault();
@@ -77,8 +75,8 @@ export default function BoardColumn({ id, title, cards }: IBoardColumn): JSX.Ele
     });
   };
 
-  const handleEdit = async (event: React.MouseEvent<HTMLFormElement>): Promise<void> => {
-    const listId = event.currentTarget.getAttribute('id');
+  const handleEdit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    const listId = event.currentTarget.id;
     try {
       event.preventDefault();
       const editData: IColumnEdit = {
@@ -90,6 +88,7 @@ export default function BoardColumn({ id, title, cards }: IBoardColumn): JSX.Ele
         },
       };
       await dispatch(editColumn(editData));
+      setColumnTitleClicked(false);
       await dispatch(fetchBoard(boardId));
     } catch (e: unknown) {
       const error = e as string;
@@ -97,69 +96,58 @@ export default function BoardColumn({ id, title, cards }: IBoardColumn): JSX.Ele
     }
   };
 
-  useOutsideClick(columnRef.current, () => {
-    dispatch(closeInput());
-  });
-
-  useOutsideClick(cardRef.current, () => {
-    dispatch(closeInput());
-  });
-
-  const handleClick = (inputId: string, event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
-    event.stopPropagation();
-    dispatch(openInput({ id: inputId }));
+  const handleInputSubmit = async (event: React.FormEvent<HTMLFormElement>, actionType: string): Promise<void> => {
+    event.preventDefault();
+    if (actionType === 'add') {
+      await handleAdd(event);
+    } else if (actionType === 'edit') {
+      await handleEdit(event);
+    }
   };
 
   return (
     <div className="column" key={id}>
       <div className="column__header">
-        <div className="column__title" id={`${id}`} onClick={(event) => handleClick(event.currentTarget.id, event)}>
-          {inputs[0]?.id === `${id}` ? (
-            <form id={`${id}`} onSubmit={handleEdit} className="input__form">
-              <input
-                className="form__input"
-                type="text"
-                placeholder="Введіть назву колонки"
-                required
-                onChange={(event) => setColumnTitle(event?.target.value)}
-              />
-              <button className="add" type="submit">
-                Змінити
-              </button>
-            </form>
+        <div className="column__title">
+          {isColumnTitleClicked ? (
+            <InputField
+              id={id}
+              buttonText="Змінити"
+              placeholder="Введіть назву колонки"
+              onChange={setColumnTitle}
+              onSubmit={handleInputSubmit}
+              onClose={() => setColumnTitleClicked(false)}
+              actionType="edit"
+            />
           ) : (
-            <h4>{title}</h4>
+            <h4 onClick={() => setColumnTitleClicked(true)}>{title}</h4>
           )}
         </div>
-        <div className="column__delete" id={`${id}`} data-name={title} onClick={handleDelete}>
+        <div
+          className="column__delete"
+          id={`${id}`}
+          data-name={title}
+          onClick={handleDelete}
+          style={isColumnTitleClicked ? { display: 'none' } : {}}
+        >
           <div>X</div>
         </div>
       </div>
       <div className="column__cards">
         {cards?.map((card) => <ColumnCard {...card} key={card.id} />)}
-        <div
-          className="add__card"
-          ref={cardRef}
-          id={`${typeof id === 'number' ? id + 1 : id}`}
-          onClick={(event) => handleClick(event.currentTarget.id, event)}
-        >
-          {inputs[0]?.id === `${typeof id === 'number' ? id + 1 : id}` ? (
-            <form id={`${id}`} onSubmit={handleAdd} className="input__form">
-              <input
-                className="form__input"
-                type="text"
-                placeholder="Введіть назву картки"
-                maxLength={16}
-                minLength={1}
-                required
-                onChange={(event) => setCardTitle(event?.target.value)}
-              />
-              <button className="add" type="submit">
-                Додати
-              </button>
-            </form>
+        <div className="add__card">
+          {isCardAddClicked ? (
+            <InputField
+              id={id}
+              placeholder="Введіть назву картки"
+              buttonText="Додати"
+              onChange={setCardTitle}
+              onSubmit={handleInputSubmit}
+              onClose={() => setCardAddClicked(false)}
+              actionType="add"
+            />
           ) : (
-            <p>
+            <p onClick={() => setCardAddClicked(true)}>
               <span>+</span> Додати нову картку
             </p>
           )}

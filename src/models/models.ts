@@ -83,3 +83,18 @@ export interface IColumnCardDelete {
   boardId: string | undefined;
   cardId: string | null;
 }
+
+export interface IInputField {
+  id?: number;
+  placeholder: string;
+  buttonText: string;
+  onChange: (params: string) => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>, actionType: string) => void;
+  onClose: () => void;
+  actionType: string;
+}
+
+export interface IBoardHeader {
+  boardTitle: string;
+  backgroundColor: string;
+}

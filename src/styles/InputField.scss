@@ -1,0 +1,19 @@
+@import './mixines.scss';
+@import './variables.scss';
+
+.input__block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  & div {
+    align-self: flex-end;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 4px;
+    margin-bottom: 1px;
+  }
+  & div:hover {
+    @include setBackgroundHoveColor($main-text-color, 0.5);
+  }
+}

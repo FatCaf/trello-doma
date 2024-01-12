@@ -5,7 +5,6 @@ import boardsReducer from './slices/homeSlice';
 import boardReducer from './slices/boardSlice';
 import cardReducer from './slices/cardSlice';
 import modalReducer from './slices/modalSlice';
-import inputReducer from './slices/inputSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,7 +13,6 @@ export const store = configureStore({
     board: boardReducer,
     card: cardReducer,
     modal: modalReducer,
-    input: inputReducer,
   },
 });
 
