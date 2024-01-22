@@ -11,7 +11,12 @@ interface CardSlice {
 }
 
 const initialState: CardSlice = {
-  card: {},
+  card: {
+    id: 0,
+    title: '',
+    position: 0,
+    list_id: 0,
+  },
   status: '',
   error: '',
 };
@@ -19,7 +24,7 @@ const initialState: CardSlice = {
 export const addCard = createAsyncThunk('card/addCard', async (postData: IColumnCardPost) => {
   const { boardId, data } = postData;
   try {
-    await instance.post(`board/${boardId}/card`, data);
+    await instance.post(`board/${boardId.boardId}/card`, data);
   } catch (error) {
     const e = error as AxiosError;
     throw new Error(e.message);
@@ -29,7 +34,7 @@ export const addCard = createAsyncThunk('card/addCard', async (postData: IColumn
 export const deleteCard = createAsyncThunk('card/deleteCard', async (deleteData: IColumnCardDelete) => {
   const { boardId, cardId } = deleteData;
   try {
-    await instance.delete(`board/${boardId}/card/${cardId}`);
+    await instance.delete(`board/${boardId.boardId}/card/${cardId}`);
   } catch (error) {
     const e = error as AxiosError;
     throw new Error(e.message);

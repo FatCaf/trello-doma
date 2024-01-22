@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
+import { Params } from 'react-router';
 import { BoardPreviewTile } from '../../models/models';
 import instance from '../../api/requests';
 
@@ -36,7 +37,7 @@ export const addBoard = createAsyncThunk('boards/addBoard', async (data: BoardPr
   }
 });
 
-export const deleteBoard = createAsyncThunk('boards/deleteBoard', async (boardId: string | null) => {
+export const deleteBoard = createAsyncThunk('boards/deleteBoard', async ({ boardId }: Readonly<Params<string>>) => {
   try {
     await instance.delete(`/board/${boardId}`);
   } catch (e: unknown) {

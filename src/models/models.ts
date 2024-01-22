@@ -1,17 +1,19 @@
-type Card = {
-  id?: number;
+import { Params } from 'react-router';
+
+export type Card = {
+  id: number;
   title?: string;
-  list_id?: number;
-  position?: number;
+  list_id: number;
+  position: number;
   description?: string;
   custom?: unknown;
 };
 
-type List = {
-  id?: number;
+export type List = {
+  id: number;
   title?: string;
-  position?: number;
-  cards?: Card[];
+  position: number;
+  cards: Card[];
 };
 
 type Custom = {
@@ -19,7 +21,7 @@ type Custom = {
 };
 
 export type BoardPreviewTile = {
-  id?: number;
+  id: number;
   title: string;
   custom: Custom;
 };
@@ -40,7 +42,7 @@ export interface IBoardColumn extends List {}
 export interface IColumnCard extends Card {}
 
 export interface IColorEdit {
-  boardId: string | undefined;
+  boardId: Readonly<Params<string>>;
   data: {
     title: string;
     custom: Custom;
@@ -48,7 +50,7 @@ export interface IColorEdit {
 }
 
 export interface IBoardEdit {
-  boardId: string | undefined;
+  boardId: Readonly<Params<string>>;
   data: {
     title: string;
     custom: Custom;
@@ -56,18 +58,21 @@ export interface IBoardEdit {
 }
 
 export interface IColumnPost {
-  boardId: string | undefined;
-  data: IBoardColumn;
+  boardId: Readonly<Params<string>>;
+  data: {
+    title: string;
+    position: number;
+  };
 }
 
 export interface IColumnDelete {
-  boardId: string | undefined;
-  listId: string | null;
+  boardId: Readonly<Params<string>>;
+  listId: string;
 }
 
 export interface IColumnEdit {
-  boardId: string | undefined;
-  listId: string | null;
+  boardId: Readonly<Params<string>>;
+  listId: string;
   data: {
     title: string;
     position: number;
@@ -75,13 +80,19 @@ export interface IColumnEdit {
 }
 
 export interface IColumnCardPost {
-  boardId: string | undefined;
-  data: IColumnCard;
+  boardId: Readonly<Params<string>>;
+  data: {
+    title: string;
+    list_id: number;
+    position: number;
+    description: string;
+    custom: unknown;
+  };
 }
 
 export interface IColumnCardDelete {
-  boardId: string | undefined;
-  cardId: string | null;
+  boardId: Readonly<Params<string>>;
+  cardId: string;
 }
 
 export interface IInputField {
@@ -97,4 +108,23 @@ export interface IInputField {
 export interface IBoardHeader {
   boardTitle: string;
   backgroundColor: string;
+}
+
+export interface ISlot {
+  width: number;
+  height: number;
+}
+
+export interface IMovingElement {
+  movingElement: HTMLDivElement | null;
+  clientX: number;
+  clientY: number;
+}
+
+export interface IChangePos {
+  boardId: Readonly<Params<string>>;
+  listId: string;
+  data: {
+    position: number;
+  };
 }

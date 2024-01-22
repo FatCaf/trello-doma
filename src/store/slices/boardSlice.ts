@@ -1,7 +1,16 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
-import { IBoard, IBoardColumn, IBoardEdit, IColumnDelete, IColumnEdit, IColumnPost } from '../../models/models';
+import { Params } from 'react-router';
+import {
+  IBoard,
+  IBoardColumn,
+  IBoardEdit,
+  IChangePos,
+  IColumnDelete,
+  IColumnEdit,
+  IColumnPost,
+} from '../../models/models';
 import instance from '../../api/requests';
 
 interface BoardSlice {
@@ -23,7 +32,7 @@ const initialState: BoardSlice = {
   error: '',
 };
 
-export const fetchBoard = createAsyncThunk('board/fetchBoard', async (boardId: string | undefined) => {
+export const fetchBoard = createAsyncThunk('board/fetchBoard', async ({ boardId }: Readonly<Params<string>>) => {
   try {
     const response: { board: IBoard } = await instance.get(`/board/${boardId}`);
     return response;
@@ -36,7 +45,7 @@ export const fetchBoard = createAsyncThunk('board/fetchBoard', async (boardId: s
 export const editBoard = createAsyncThunk('board/editBoard', async (editData: IBoardEdit) => {
   const { boardId, data } = editData;
   try {
-    const response: { board: IBoard } = await instance.put(`/board/${boardId}`, data);
+    const response: { board: IBoard } = await instance.put(`/board/${boardId.boardId}`, data);
     return response;
   } catch (e: unknown) {
     const error = e as AxiosError;
@@ -47,7 +56,7 @@ export const editBoard = createAsyncThunk('board/editBoard', async (editData: IB
 export const addColumn = createAsyncThunk('board/addColumn', async (postData: IColumnPost) => {
   try {
     const { boardId, data } = postData;
-    await instance.post(`/board/${boardId}/list`, data);
+    await instance.post(`/board/${boardId.boardId}/list`, data);
   } catch (error) {
     const e = error as AxiosError;
     throw new Error(e.message);
@@ -57,7 +66,7 @@ export const addColumn = createAsyncThunk('board/addColumn', async (postData: IC
 export const editColumn = createAsyncThunk('board/editColumn', async (editData: IColumnEdit) => {
   const { boardId, listId, data } = editData;
   try {
-    await instance.put(`board/${boardId}/list/${listId}`, data);
+    await instance.put(`board/${boardId.boardId}/list/${listId}`, data);
   } catch (error) {
     const e = error as AxiosError;
     throw new Error(e.message);
@@ -67,7 +76,18 @@ export const editColumn = createAsyncThunk('board/editColumn', async (editData: 
 export const deleteColumn = createAsyncThunk('board/deleteColumn', async (delData: IColumnDelete) => {
   const { boardId, listId } = delData;
   try {
-    await instance.delete(`board/${boardId}/list/${listId}`);
+    await instance.delete(`board/${boardId.boardId}/list/${listId}`);
+  } catch (error) {
+    const e = error as AxiosError;
+    throw new Error(e.message);
+  }
+});
+
+export const editColPos = createAsyncThunk('board/editColPos', async (editData: IChangePos) => {
+  const { boardId, listId, data } = editData;
+
+  try {
+    await instance.put(`board/${boardId.boardId}/list/${listId}`, data);
   } catch (error) {
     const e = error as AxiosError;
     throw new Error(e.message);

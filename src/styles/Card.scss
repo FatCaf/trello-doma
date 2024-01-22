@@ -1,12 +1,20 @@
 @import './variables.scss';
 @import './mixines.scss';
 
+.drag__wrapper {
+  width: 100%;
+  margin-bottom: 0.625rem;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
 .card {
+  position: relative;
   border: 2px solid transparent;
   box-shadow: 0 0 5px gray;
   border-radius: 6px;
   width: 100%;
-  margin-bottom: 0.625rem;
+  // margin-bottom: 0.625rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -23,8 +31,11 @@
     font-size: 0.875rem;
     padding: 2px;
   }
-  &:last-child {
-    margin-bottom: 0;
+  // &:last-child {
+  //   margin-bottom: 0;
+  // }
+  &.blurred {
+    opacity: 0.5;
   }
 }
 

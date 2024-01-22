@@ -56,6 +56,16 @@
   justify-content: center;
   align-items: start;
   flex-direction: column;
+  gap: 5px;
+}
+
+.drop__zone {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+  width: 100%;
+  min-height: 30px;
 }
 
 .add__card {

@@ -11,7 +11,7 @@ import { fetchBoard } from '../store/slices/boardSlice';
 
 const Settings = memo((): JSX.Element => {
   const dispatch = useAppDispatch();
-  const { boardId } = useParams<{ boardId: string }>();
+  const boardId = useParams<{ boardId: string }>();
   const title = useAppSelector((state) => state.board.board.title);
 
   const handleClick = async (event: React.MouseEvent<HTMLDivElement>): Promise<void> => {

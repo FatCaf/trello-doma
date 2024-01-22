@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as React from 'react';
 import { useParams } from 'react-router';
-import BoardColumn from '../components/BoardColumn';
+import Column from '../components/Column';
 import Settings from '../components/Settings';
 import '../styles/Board.scss';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -16,7 +16,7 @@ import MobileSidebar from '../components/MobileSidebar';
 
 export default function Board(): JSX.Element {
   const [title, setTitle] = useState('Безіменна колонка');
-  const { boardId } = useParams<{ boardId: string }>();
+  const boardId = useParams<{ boardId: string }>();
   const dispatch = useAppDispatch();
   const { status } = useAppSelector((state) => state.board);
   const { board } = useAppSelector((state) => state.board);
@@ -24,6 +24,7 @@ export default function Board(): JSX.Element {
   const backgroundColor = useAppSelector((state) => state.board.board.custom.background);
   const { modals } = useAppSelector((state) => state.modal);
   const [isAddColumnClicked, setAddColumnClicked] = useState(false);
+  // const elementData = useAppSelector((state) => state.dnd.elementData);
 
   useEffect(() => {
     dispatch(fetchBoard(boardId));
@@ -57,8 +58,23 @@ export default function Board(): JSX.Element {
     }
   };
 
+  // const dropHandler = async (): Promise<void> => {
+  //   const { id, position } = JSON.parse(elementData);
+  //   const editData: IChangePos = {
+  //     boardId,
+  //     listId: id,
+  //     data: {
+  //       position,
+  //     },
+  //   };
+  //   await dispatch(editColPos(editData));
+  // };
+
+  const overHandler = (e: React.DragEvent): void => {
+    e.preventDefault();
+  };
   return (
-    <div className="board" key={boardId} id={`${boardId}`}>
+    <div className="board" key={boardId.boardId} id={`${boardId.boardId}`}>
       {status === 'rejected' && <BoardError />}
       <BoardSideBar />
       {modals[0]?.modalName === 'mobile-sidebar' && <MobileSidebar />}
@@ -66,8 +82,15 @@ export default function Board(): JSX.Element {
       <div className="board__wrapper">
         <BoardHeader boardTitle={board.title} backgroundColor={backgroundColor} />
         <div className="board__main__content">
-          <div className="columns" key="columns">
-            {lists && lists.map((list) => <BoardColumn {...list} key={list?.id} />)}
+          <div
+            className="columns"
+            // onDrop={dropHandler}
+            onDragOver={(e: React.DragEvent<HTMLDivElement>) => overHandler(e)}
+          >
+            {lists.length > 0 &&
+              [...lists]
+                .sort((cur, next) => cur.position - next.position)
+                .map((list) => <Column {...list} key={list?.id} />)}
             <div className="add__column__wrapper">
               <div className="add__column">
                 {isAddColumnClicked ? (

@@ -12,7 +12,7 @@ export default function BoardHeader({ boardTitle, backgroundColor }: IBoardHeade
   const [title, setTitle] = useState('Безіменна дошка');
   const { modals } = useAppSelector((state) => state.modal);
   const [isTitleClicked, setTitleClicked] = useState(false);
-  const { boardId } = useParams<{ boardId: string }>();
+  const boardId = useParams<{ boardId: string }>();
 
   const handleEdit = async (): Promise<void> => {
     try {
