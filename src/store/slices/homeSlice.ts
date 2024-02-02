@@ -2,8 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
-import { Params } from 'react-router';
-import { BoardPreviewTile } from '../../models/models';
+import { BoardPreviewTile, IBoardPost } from '../../models/models';
 import instance from '../../api/requests';
 
 interface HomeSlice {
@@ -28,7 +27,8 @@ export const fetchBoards = createAsyncThunk('boards/fetchBoards', async () => {
   }
 });
 
-export const addBoard = createAsyncThunk('boards/addBoard', async (data: BoardPreviewTile) => {
+export const addBoard = createAsyncThunk('boards/addBoard', async (postData: IBoardPost) => {
+  const { data } = postData;
   try {
     await instance.post('/board', data);
   } catch (e: unknown) {
@@ -37,7 +37,7 @@ export const addBoard = createAsyncThunk('boards/addBoard', async (data: BoardPr
   }
 });
 
-export const deleteBoard = createAsyncThunk('boards/deleteBoard', async ({ boardId }: Readonly<Params<string>>) => {
+export const deleteBoard = createAsyncThunk('boards/deleteBoard', async (boardId: string) => {
   try {
     await instance.delete(`/board/${boardId}`);
   } catch (e: unknown) {
@@ -79,5 +79,7 @@ const homeSlice = createSlice({
     });
   },
 });
+
+export const selectBoards = (state: { boards: HomeSlice }): BoardPreviewTile[] => state.boards.boards;
 
 export default homeSlice.reducer;

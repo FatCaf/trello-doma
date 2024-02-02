@@ -1,0 +1,17 @@
+@import './mixines.scss';
+@import './variables.scss';
+
+.user__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 5px;
+}
+
+.user__avatar {
+  border-radius: 50%;
+  box-shadow: $box-shadow;
+  width: 32px;
+  height: 32px;
+}

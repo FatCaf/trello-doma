@@ -2,36 +2,33 @@ import { memo } from 'react';
 import * as React from 'react';
 import '../styles/Settings.scss';
 import { useParams } from 'react-router';
-import { AxiosError } from 'axios';
-import { IColorEdit } from '../models/models';
-import { editColor } from '../store/slices/bodyColorSlice';
+import { IHandleEdit } from '../models/models';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { closeModal } from '../store/slices/modalSlice';
-import { fetchBoard } from '../store/slices/boardSlice';
+import { handleEdit } from '../common/handlers/handlers';
 
 const Settings = memo((): JSX.Element => {
   const dispatch = useAppDispatch();
-  const boardId = useParams<{ boardId: string }>();
+  const ids = useParams<{ boardId: string }>();
+  const boardId = ids.boardId as string;
   const title = useAppSelector((state) => state.board.board.title);
 
   const handleClick = async (event: React.MouseEvent<HTMLDivElement>): Promise<void> => {
     const clickedColor = getComputedStyle(event.currentTarget).backgroundColor;
-    const editData: IColorEdit = {
-      boardId,
-      data: {
-        title,
-        custom: {
-          background: clickedColor,
-        },
+    const editData = {
+      title,
+      custom: {
+        background: clickedColor,
       },
     };
-    try {
-      await dispatch(editColor(editData));
-      await dispatch(fetchBoard(boardId));
-    } catch (error) {
-      const e = error as AxiosError;
-      throw new Error(e.message);
-    }
+    const props: IHandleEdit = {
+      itemName: 'editBoardColor',
+      boardId,
+      dispatch,
+      event,
+      data: editData,
+    };
+    await handleEdit(props);
   };
 
   return (

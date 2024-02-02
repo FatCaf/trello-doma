@@ -1,17 +1,18 @@
-import { Params } from 'react-router';
+import { ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
 
 export type Card = {
   id: number;
-  title?: string;
+  title: string;
   list_id: number;
   position: number;
-  description?: string;
+  description: string;
+  users: User[];
   custom?: unknown;
 };
 
 export type List = {
   id: number;
-  title?: string;
+  title: string;
   position: number;
   cards: Card[];
 };
@@ -34,15 +35,14 @@ type User = {
 export interface IBoard {
   title: string;
   custom: Custom;
-  users: User[];
   lists: List[];
 }
 
-export interface IBoardColumn extends List {}
-export interface IColumnCard extends Card {}
+export interface IColumn extends List {}
+export interface ICard extends Card {}
 
 export interface IColorEdit {
-  boardId: Readonly<Params<string>>;
+  boardId: string;
   data: {
     title: string;
     custom: Custom;
@@ -50,7 +50,14 @@ export interface IColorEdit {
 }
 
 export interface IBoardEdit {
-  boardId: Readonly<Params<string>>;
+  boardId: string;
+  data: {
+    title: string;
+    custom: Custom;
+  };
+}
+
+export interface IBoardPost {
   data: {
     title: string;
     custom: Custom;
@@ -58,7 +65,7 @@ export interface IBoardEdit {
 }
 
 export interface IColumnPost {
-  boardId: Readonly<Params<string>>;
+  boardId: string;
   data: {
     title: string;
     position: number;
@@ -66,12 +73,12 @@ export interface IColumnPost {
 }
 
 export interface IColumnDelete {
-  boardId: Readonly<Params<string>>;
+  boardId: string;
   listId: string;
 }
 
 export interface IColumnEdit {
-  boardId: Readonly<Params<string>>;
+  boardId: string;
   listId: string;
   data: {
     title: string;
@@ -79,8 +86,8 @@ export interface IColumnEdit {
   };
 }
 
-export interface IColumnCardPost {
-  boardId: Readonly<Params<string>>;
+export interface ICardPost {
+  boardId: string;
   data: {
     title: string;
     list_id: number;
@@ -90,9 +97,19 @@ export interface IColumnCardPost {
   };
 }
 
-export interface IColumnCardDelete {
-  boardId: Readonly<Params<string>>;
+export interface ICardDelete {
+  boardId: string;
   cardId: string;
+}
+
+export interface ICardEdit {
+  boardId: string;
+  cardId: string | undefined;
+  data: {
+    title: string | undefined;
+    description: string | undefined;
+    list_id: number | undefined;
+  };
 }
 
 export interface IInputField {
@@ -121,10 +138,43 @@ export interface IMovingElement {
   clientY: number;
 }
 
-export interface IChangePos {
-  boardId: Readonly<Params<string>>;
-  listId: string;
-  data: {
-    position: number;
-  };
+export interface IEditPos {
+  elementId: number;
+  elementsArray: Array<IColumn>;
+  itemName: string;
+}
+
+export interface IEditedPos {
+  id: number;
+  position: number;
+  list_id?: number;
+}
+
+export interface IHandleDelete {
+  itemName: string;
+  event: React.MouseEvent<HTMLDivElement> | React.FormEvent<HTMLFormElement>;
+  dispatch: ThunkDispatch<object, undefined, UnknownAction>;
+  boardId: string;
+}
+
+export interface IHandleEdit {
+  itemName: string;
+  event: React.MouseEvent<HTMLDivElement> | React.FormEvent<HTMLFormElement>;
+  dispatch: ThunkDispatch<object, undefined, UnknownAction>;
+  boardId: string;
+  data: object;
+}
+
+export interface IHandleAdd {
+  itemName: string;
+  dispatch: ThunkDispatch<object, undefined, UnknownAction>;
+  boardId: string;
+  data: object;
+  refresh: boolean;
+}
+
+export interface ICardAction {
+  actionTitle: string;
+  actionType: string;
+  onClose: () => void;
 }

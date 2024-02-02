@@ -22,7 +22,7 @@ const initialState: BodyColor = {
 export const editColor = createAsyncThunk('color/editColor', async (editData: IColorEdit) => {
   const { boardId, data } = editData;
   try {
-    await instance.put(`board/${boardId.boardId}`, data);
+    await instance.put(`board/${boardId}`, data);
   } catch (error) {
     const e = error as AxiosError;
     throw new Error(e.message);

@@ -5,7 +5,7 @@ import boardsReducer from './slices/homeSlice';
 import boardReducer from './slices/boardSlice';
 import cardReducer from './slices/cardSlice';
 import modalReducer from './slices/modalSlice';
-import dndReducer from './slices/dragNdropSlice';
+import cardModalReducer from './slices/cardModalSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,12 +14,8 @@ export const store = configureStore({
     board: boardReducer,
     card: cardReducer,
     modal: modalReducer,
-    dnd: dndReducer,
+    cardModal: cardModalReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

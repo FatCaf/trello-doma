@@ -55,7 +55,7 @@
   padding: 0 0.4375rem;
   box-shadow: 0 0 5px gray;
   &:hover {
-    @include setBackgroundHoveColor($border-hover-color, 0.6);
+    @include setBackgroundHoveColor($no-color, 0.8);
     color: $tile-bgc;
     box-shadow: none;
   }

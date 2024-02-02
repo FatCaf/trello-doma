@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import Board from './pages/Board';
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
+import CardModal from './components/CardModal';
 
 export default function App(): JSX.Element {
   useEffect(() => {
@@ -21,8 +22,10 @@ export default function App(): JSX.Element {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/board/:boardId" element={<Board />} />
         <Route path="/" element={<Home />} index />
+        <Route path="/board/:boardId/*" element={<Board />}>
+          <Route path="card/:cardId/" element={<CardModal />} />
+        </Route>
       </Routes>
     </Router>
   );

@@ -1,0 +1,64 @@
+@import './mixines.scss';
+@import './variables.scss';
+
+.form__container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+    'name name'
+    'board board'
+    'column position';
+  gap: 5px;
+  padding: 5px;
+}
+
+.name__input {
+  display: flex;
+  flex-direction: column;
+  grid-area: name;
+}
+
+.select {
+  padding: 5px;
+  border-radius: 4px;
+  box-shadow: $box-shadow;
+  display: flex;
+  flex-direction: column;
+  &:hover {
+    @include setBackgroundHoveColor(gray, 0.8);
+    box-shadow: none;
+  }
+  & label {
+    cursor: pointer;
+  }
+  & select {
+    cursor: pointer;
+    appearance: none;
+    border: none;
+    padding: 2px;
+  }
+  &.select-board {
+    grid-area: board;
+  }
+  &.select-column {
+    grid-area: column;
+  }
+  &.select-position {
+    grid-area: position;
+  }
+}
+
+.action__btn {
+  padding: 5px;
+  background-color: $tile-bgc;
+  border-radius: 6px;
+  box-shadow: $box-shadow;
+  text-align: center;
+  color: $main-text-color;
+  cursor: pointer;
+  &:hover {
+    @include setBackgroundHoveColor($border-hover-color, 0.6);
+    color: $tile-bgc;
+    box-shadow: none;
+  }
+}

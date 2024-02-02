@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
-import { confirmAlert } from 'react-confirm-alert';
+
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { deleteBoard, fetchBoards } from '../store/slices/homeSlice';
+import { fetchBoards } from '../store/slices/homeSlice';
 import { closeModal } from '../store/slices/modalSlice';
 import BoardPreview from './BoardPreview';
 import AddBoardModal from './AddBoardModal';
 import addSvg from '../assets/add.svg';
 import '../styles/MobileSidebar.scss';
+import { handleDelete } from '../common/handlers/handlers';
+import { IHandleDelete } from '../models/models';
 
 export default function MobileSidebar(): JSX.Element {
   const dispatch = useAppDispatch();
   const [isHidden, setHidden] = useState(false);
-  const { status } = useAppSelector((state) => state.boards);
+  // const { status } = useAppSelector((state) => state.boards);
   const { boards } = useAppSelector((state) => state.boards);
   const { modals } = useAppSelector((state) => state.modal);
   const [tempClick, setTempClick] = useState(false);
@@ -21,34 +23,14 @@ export default function MobileSidebar(): JSX.Element {
     dispatch(fetchBoards());
   }, [dispatch]);
 
-  const handleDelete = (event: React.MouseEvent<HTMLDivElement>): void => {
-    const name = event.currentTarget.getAttribute('data-name');
-    const boardID = event.currentTarget.getAttribute('id');
-    confirmAlert({
-      title: 'Видалити дошку',
-      message: `Чи точно ви хочете видалити дошку ${name}`,
-      buttons: [
-        {
-          label: 'Так',
-          onClick: async (): Promise<void> => {
-            try {
-              await dispatch(deleteBoard(boardID));
-              if (status !== 'rejected') {
-                await dispatch(fetchBoards());
-              }
-            } catch (e: unknown) {
-              const error = e as string;
-              throw new Error(error);
-            }
-          },
-        },
-        {
-          label: 'Ні',
-          // eslint-disable-next-line no-console
-          onClick: () => console.log('no delete'),
-        },
-      ],
-    });
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>): void => {
+    const props: IHandleDelete = {
+      itemName: 'board',
+      event,
+      dispatch,
+      boardId: event.currentTarget.id,
+    };
+    handleDelete(props);
   };
 
   // const handleModalClick = (modal: string | null, event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
@@ -91,7 +73,7 @@ export default function MobileSidebar(): JSX.Element {
               <Link to={`/board/${board.id}`} key={board.id}>
                 <BoardPreview {...board} key={board.id} />
               </Link>
-              <div className="board__delete" id={`${board.id}`} data-name={board.title} onClick={handleDelete}>
+              <div className="board__delete" id={`${board.id}`} data-name={board.title} onClick={handleClick}>
                 <span>X</span>
               </div>
             </div>

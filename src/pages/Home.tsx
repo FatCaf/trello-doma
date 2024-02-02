@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import * as React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { confirmAlert } from 'react-confirm-alert';
 import '../styles/Home.scss';
 import { Link } from 'react-router-dom';
 import BoardPreview from '../components/BoardPreview';
 import AddBoardModal from '../components/AddBoardModal';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { deleteBoard, fetchBoards } from '../store/slices/homeSlice';
+import { fetchBoards } from '../store/slices/homeSlice';
 import { openModal } from '../store/slices/modalSlice';
+import { handleDelete } from '../common/handlers/handlers';
+import { IHandleDelete } from '../models/models';
 
 export default function Home(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -20,34 +20,14 @@ export default function Home(): JSX.Element {
     dispatch(fetchBoards());
   }, [dispatch]);
 
-  const handleDelete = (event: React.MouseEvent<HTMLDivElement>): void => {
-    const name = event.currentTarget.getAttribute('data-name');
-    const boardId = event.currentTarget.getAttribute('id');
-    confirmAlert({
-      title: 'Видалити дошку',
-      message: `Чи точно ви хочете видалити дошку ${name}`,
-      buttons: [
-        {
-          label: 'Так',
-          onClick: async (): Promise<void> => {
-            try {
-              await dispatch(deleteBoard(boardId));
-              if (status !== 'rejected') {
-                await dispatch(fetchBoards());
-              }
-            } catch (e: unknown) {
-              const error = e as string;
-              throw new Error(error);
-            }
-          },
-        },
-        {
-          label: 'Ні',
-          // eslint-disable-next-line no-console
-          onClick: () => console.log('no delete'),
-        },
-      ],
-    });
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>): void => {
+    const props: IHandleDelete = {
+      itemName: 'board',
+      event,
+      dispatch,
+      boardId: event.currentTarget.id,
+    };
+    handleDelete(props);
   };
 
   const handleModalClick = (modal: string | null, event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
@@ -69,7 +49,12 @@ export default function Home(): JSX.Element {
                 <Link to={`/board/${board?.id}`} key={board?.id}>
                   <BoardPreview {...board} key={board?.id} />
                 </Link>
-                <div className="board__delete" id={`${board?.id}`} data-name={board?.title} onClick={handleDelete}>
+                <div
+                  className="board__delete"
+                  id={`${board?.id}`}
+                  data-name={board?.title}
+                  onClick={(event) => handleClick(event)}
+                >
                   <span>X</span>
                 </div>
               </div>

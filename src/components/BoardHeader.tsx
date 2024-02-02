@@ -2,41 +2,35 @@ import { useState } from 'react';
 import { useParams } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import InputField from './InputField';
-import { editBoard, fetchBoard } from '../store/slices/boardSlice';
-import { IBoardEdit, IBoardHeader } from '../models/models';
+import { IBoardHeader, IHandleEdit } from '../models/models';
 import { openModal } from '../store/slices/modalSlice';
 import '../styles/BoardHeader.scss';
+import { handleEdit } from '../common/handlers/handlers';
 
 export default function BoardHeader({ boardTitle, backgroundColor }: IBoardHeader): JSX.Element {
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState('Безіменна дошка');
   const { modals } = useAppSelector((state) => state.modal);
   const [isTitleClicked, setTitleClicked] = useState(false);
-  const boardId = useParams<{ boardId: string }>();
+  const ids = useParams<{ boardId: string }>();
+  const boardId = ids.boardId as string;
 
-  const handleEdit = async (): Promise<void> => {
-    try {
-      const editData: IBoardEdit = {
-        boardId,
-        data: {
-          title,
-          custom: {
-            background: backgroundColor,
-          },
-        },
-      };
-      await dispatch(editBoard(editData));
-      setTitleClicked(false);
-      await dispatch(fetchBoard(boardId));
-    } catch (e: unknown) {
-      const error = e as string;
-      throw new Error(error);
-    }
-  };
-
-  const handleInputSubmit = async (event: React.FormEvent<HTMLFormElement>, actionType: string): Promise<void> => {
+  const handleInputSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-    if (actionType === 'edit') await handleEdit();
+    const editData = {
+      title,
+      custom: {
+        background: backgroundColor,
+      },
+    };
+    const props: IHandleEdit = {
+      itemName: 'editBoardTitle',
+      boardId,
+      dispatch,
+      event,
+      data: editData,
+    };
+    await handleEdit(props);
   };
 
   const handleModalClick = (modal: string | null, event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {

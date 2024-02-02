@@ -3,9 +3,9 @@ import * as React from 'react';
 import preview from '../assets/preview.png';
 import '../styles/AddBoardModal.scss';
 import { useAppDispatch } from '../store/hooks';
-import { BoardPreviewTile } from '../models/models';
-import { addBoard, fetchBoards } from '../store/slices/homeSlice';
+import { IHandleAdd } from '../models/models';
 import { closeModal } from '../store/slices/modalSlice';
+import { handleAdd } from '../common/handlers/handlers';
 
 export default function AddBoardModal(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -19,21 +19,21 @@ export default function AddBoardModal(): JSX.Element {
   };
 
   const submitHandler = async (event: React.MouseEvent<HTMLFormElement>): Promise<void> => {
-    try {
-      event.preventDefault();
-      const postData: BoardPreviewTile = {
-        title: boardName,
-        custom: {
-          background: previewColor,
-        },
-      };
-      await dispatch(addBoard(postData));
-      dispatch(closeModal());
-      await dispatch(fetchBoards());
-    } catch (e: unknown) {
-      const error = e as string;
-      throw new Error(error);
-    }
+    event.preventDefault();
+    const postData = {
+      title: boardName,
+      custom: {
+        background: previewColor,
+      },
+    };
+    const props: IHandleAdd = {
+      itemName: 'addBoard',
+      dispatch,
+      data: postData,
+      boardId: '',
+      refresh: true,
+    };
+    await handleAdd(props);
   };
 
   return (

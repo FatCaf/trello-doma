@@ -2,171 +2,82 @@
 import { useState } from 'react';
 import * as React from 'react';
 import { useParams } from 'react-router';
-import { confirmAlert } from 'react-confirm-alert';
 import Card from './Card';
-import '../styles/BoardColumn.scss';
-import { IBoardColumn, IColumnCardPost, IColumnDelete, IColumnEdit } from '../models/models';
-import { addCard } from '../store/slices/cardSlice';
-import { useAppDispatch } from '../store/hooks';
-import { deleteColumn, editColumn, fetchBoard } from '../store/slices/boardSlice';
+import '../styles/Column.scss';
+import { IColumn, IHandleDelete, IHandleEdit, IHandleAdd, IEditPos } from '../models/models';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import InputField from './InputField';
-// import { dragStarted, setDraggingData } from '../store/slices/dragNdropSlice';
+import { handleAdd, handleDelete, handleEdit } from '../common/handlers/handlers';
+import editPosition from '../common/handlers/positionEditor';
+import instance from '../api/requests';
 
-export default function BoardColumn({ id, title, cards }: IBoardColumn): JSX.Element {
-  const boardId = useParams<{ boardId: string }>();
+export default function Column({ id, title, cards }: IColumn): JSX.Element {
+  const ids = useParams<{ boardId: string }>();
+  const boardId = ids.boardId as string;
   const dispatch = useAppDispatch();
+  const lists = useAppSelector((state) => state.board.board.lists);
   const [isColumnTitleClicked, setColumnTitleClicked] = useState(false);
   const [isCardAddClicked, setCardAddClicked] = useState(false);
   const [cardTitle, setCardTitle] = useState('Безіменна картка');
   const [columnTitle, setColumnTitle] = useState('Безіменна колонка');
-  // const { lists } = useAppSelector((state) => state.board.board);
-  // const elementData = useAppSelector((state) => state.dnd.elementData);
 
-  const handleAdd = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    const listId = +event.currentTarget.id;
-    try {
-      event.preventDefault();
-      const postData: IColumnCardPost = {
-        boardId,
-        data: {
-          title: cardTitle,
-          list_id: listId,
-          position: cards.length ? cards.length + 1 : 1,
-          description: '',
-          custom: {
-            deadline: '',
-          },
-        },
-      };
-      await dispatch(addCard(postData));
-      await dispatch(fetchBoard(boardId));
-    } catch (e: unknown) {
-      const error = e as string;
-      throw new Error(error);
-    }
-  };
-
-  const handleDelete = (event: React.MouseEvent<HTMLDivElement>): void => {
-    const name = event.currentTarget.getAttribute('data-name');
-    const listId = event.currentTarget.getAttribute('id') as string;
-    const deleteData: IColumnDelete = {
-      boardId,
-      listId,
+  const handleClick = async (event: React.MouseEvent<HTMLDivElement>): Promise<void> => {
+    const Posprops: IEditPos = {
+      elementsArray: lists,
+      elementId: Number(event.currentTarget.id),
+      itemName: 'column',
     };
+    const posArray = editPosition(Posprops);
 
-    confirmAlert({
-      title: 'Видалити колонку',
-      message: `Чи точно ви хочете видалити колонку ${name} ?`,
-      buttons: [
-        {
-          label: 'Так',
-          onClick: async (): Promise<void> => {
-            try {
-              await dispatch(deleteColumn(deleteData));
-              await dispatch(fetchBoard(boardId));
-            } catch (e: unknown) {
-              const error = e as string;
-              throw new Error(error);
-            }
-          },
-        },
-        {
-          label: 'Ні',
-          // eslint-disable-next-line no-console
-          onClick: () => console.log('no delete'),
-        },
-      ],
-    });
-  };
-
-  const handleEdit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    const listId = event.currentTarget.id;
-    try {
-      event.preventDefault();
-      const editData: IColumnEdit = {
-        boardId,
-        listId,
-        data: {
-          title: columnTitle,
-          position: 1,
-        },
-      };
-      await dispatch(editColumn(editData));
-      setColumnTitleClicked(false);
-      await dispatch(fetchBoard(boardId));
-    } catch (e: unknown) {
-      const error = e as string;
-      throw new Error(error);
-    }
+    const props: IHandleDelete = {
+      itemName: 'column',
+      event,
+      dispatch,
+      boardId,
+    };
+    await handleDelete(props);
+    if (posArray.length > 0) await instance.put(`board/${boardId}/list`, posArray);
   };
 
   const handleInputSubmit = async (event: React.FormEvent<HTMLFormElement>, actionType: string): Promise<void> => {
     event.preventDefault();
     if (actionType === 'add') {
-      await handleAdd(event);
+      const postData = {
+        title: cardTitle,
+        list_id: Number(event.currentTarget.id),
+        position: cards.length ? cards.length + 1 : 1,
+        description: '',
+        custom: {
+          deadline: '',
+        },
+      };
+      const props: IHandleAdd = {
+        itemName: 'addCard',
+        dispatch,
+        data: postData,
+        boardId,
+        refresh: true,
+      };
+      await handleAdd(props);
     } else if (actionType === 'edit') {
-      await handleEdit(event);
+      const editData = {
+        title: columnTitle,
+        position: 1,
+      };
+      const props: IHandleEdit = {
+        itemName: 'editColumnTitle',
+        boardId,
+        dispatch,
+        event,
+        data: editData,
+      };
+      await handleEdit(props);
+      setColumnTitleClicked(false);
     }
   };
 
-  // const dropHandler = async (e: React.DragEvent): Promise<void> => {
-  //   console.log(lists);
-  //   console.log(elementData);
-  //   const { id, title, description, custom } = JSON.parse(elementData);
-
-  //   const deleteData: IColumnCardDelete = {
-  //     boardId,
-  //     cardId: id,
-  //   };
-
-  //   const postData: IColumnCardPost = {
-  //     boardId,
-  //     data: {
-  //       title,
-  //       list_id: +e.currentTarget.id,
-  //       position: cards.length ? cards.length + 1 : 1,
-  //       description,
-  //       custom,
-  //     },
-  //   };
-  //   await dispatch(deleteCard(deleteData));
-  //   await dispatch(addCard(postData));
-  //   await dispatch(fetchBoard(boardId));
-  //   console.log(lists);
-  // };
-
-  const overHandler = (e: React.DragEvent): void => {
-    e.preventDefault();
-  };
-
-  //   const mainContent = document.querySelector('.column__cards') as Element;
-  //   const parentCoord = mainContent.getBoundingClientRect();
-
-  //   const isOutsideX =
-  //     movingElement.clientX < parentCoord.x || movingElement.clientX + width > parentCoord.x + parentCoord.width;
-
-  //   const isOutsideY =
-  //     movingElement.clientY < parentCoord.y || movingElement.clientY + height > parentCoord.y + parentCoord.height;
-  // }, [height, movingElement.clientX, movingElement.clientY, width]);
-
-  // useEffect(() => {
-  //   movingElement.movingElement?.addEventListener('drag', handleDrag);
-
-  //   return () => {
-  //     movingElement.movingElement?.removeEventListener('drag', handleDrag);
-  //   };
-  // }, [handleDrag, movingElement]);
-
   return (
-    <div
-      className="column"
-      id={`${id}`}
-      key={id}
-      draggable
-      // onDragStart={(e: React.DragEvent) => dragStartHandler(e)}
-      onDragOver={(e: React.DragEvent<HTMLDivElement>) => overHandler(e)}
-      // onDrop={(e: React.DragEvent) => dropHandler(e)}
-    >
+    <div className="column" id={`${id}`} key={id}>
       <div className="column__header">
         <div className="column__title">
           {isColumnTitleClicked ? (
@@ -187,7 +98,7 @@ export default function BoardColumn({ id, title, cards }: IBoardColumn): JSX.Ele
           className="column__delete"
           id={`${id}`}
           data-name={title}
-          onClick={handleDelete}
+          onClick={(event) => handleClick(event)}
           style={isColumnTitleClicked ? { display: 'none' } : {}}
         >
           <div>X</div>

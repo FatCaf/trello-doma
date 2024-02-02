@@ -5,18 +5,21 @@ import Column from '../components/Column';
 import Settings from '../components/Settings';
 import '../styles/Board.scss';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { addColumn, fetchBoard } from '../store/slices/boardSlice';
-import { IColumnPost } from '../models/models';
+import { fetchBoard } from '../store/slices/boardSlice';
+import { IHandleAdd } from '../models/models';
 import BoardLoader from '../components/BoardLoader';
 import BoardError from '../components/BoardError';
 import BoardSideBar from '../components/BoardSideBar';
 import InputField from '../components/InputField';
 import BoardHeader from '../components/BoardHeader';
 import MobileSidebar from '../components/MobileSidebar';
+import CardModal from '../components/CardModal';
+import { handleAdd } from '../common/handlers/handlers';
 
 export default function Board(): JSX.Element {
   const [title, setTitle] = useState('Безіменна колонка');
-  const boardId = useParams<{ boardId: string }>();
+  const ids = useParams<{ boardId: string }>();
+  const boardId = ids.boardId as string;
   const dispatch = useAppDispatch();
   const { status } = useAppSelector((state) => state.board);
   const { board } = useAppSelector((state) => state.board);
@@ -24,7 +27,6 @@ export default function Board(): JSX.Element {
   const backgroundColor = useAppSelector((state) => state.board.board.custom.background);
   const { modals } = useAppSelector((state) => state.modal);
   const [isAddColumnClicked, setAddColumnClicked] = useState(false);
-  // const elementData = useAppSelector((state) => state.dnd.elementData);
 
   useEffect(() => {
     dispatch(fetchBoard(boardId));
@@ -34,47 +36,26 @@ export default function Board(): JSX.Element {
     document.body.style.backgroundColor = backgroundColor;
   }, [backgroundColor]);
 
-  const handleAdd = async (): Promise<void> => {
-    try {
-      const postData: IColumnPost = {
-        boardId,
-        data: {
-          title,
-          position: lists.length ? lists.length + 1 : 1,
-        },
-      };
-      await dispatch(addColumn(postData));
-      await dispatch(fetchBoard(boardId));
-    } catch (e: unknown) {
-      const error = e as string;
-      throw new Error(error);
-    }
-  };
-
   const handleInputSubmit = async (event: React.FormEvent<HTMLFormElement>, actionType: string): Promise<void> => {
     event.preventDefault();
     if (actionType === 'add') {
-      await handleAdd();
+      const postData = {
+        title,
+        position: lists.length ? lists.length + 1 : 1,
+      };
+      const props: IHandleAdd = {
+        itemName: 'addColumn',
+        dispatch,
+        data: postData,
+        boardId,
+        refresh: true,
+      };
+      await handleAdd(props);
     }
   };
 
-  // const dropHandler = async (): Promise<void> => {
-  //   const { id, position } = JSON.parse(elementData);
-  //   const editData: IChangePos = {
-  //     boardId,
-  //     listId: id,
-  //     data: {
-  //       position,
-  //     },
-  //   };
-  //   await dispatch(editColPos(editData));
-  // };
-
-  const overHandler = (e: React.DragEvent): void => {
-    e.preventDefault();
-  };
   return (
-    <div className="board" key={boardId.boardId} id={`${boardId.boardId}`}>
+    <div className="board" key={boardId} id={`${boardId}`}>
       {status === 'rejected' && <BoardError />}
       <BoardSideBar />
       {modals[0]?.modalName === 'mobile-sidebar' && <MobileSidebar />}
@@ -82,15 +63,9 @@ export default function Board(): JSX.Element {
       <div className="board__wrapper">
         <BoardHeader boardTitle={board.title} backgroundColor={backgroundColor} />
         <div className="board__main__content">
-          <div
-            className="columns"
-            // onDrop={dropHandler}
-            onDragOver={(e: React.DragEvent<HTMLDivElement>) => overHandler(e)}
-          >
-            {lists.length > 0 &&
-              [...lists]
-                .sort((cur, next) => cur.position - next.position)
-                .map((list) => <Column {...list} key={list?.id} />)}
+          {modals[0]?.modalName === 'card' && <CardModal />}
+          <div className="columns" key="columns">
+            {lists && lists.map((list) => <Column {...list} key={list?.id} />)}
             <div className="add__column__wrapper">
               <div className="add__column">
                 {isAddColumnClicked ? (
