@@ -9,6 +9,7 @@ import { handleAdd } from '../common/handlers/handlers';
 import { deleteCard } from '../store/slices/cardSlice';
 import { fetchBoard } from '../store/slices/boardSlice';
 import editPosition from '../common/handlers/positionEditor';
+import { closeModal } from '../store/slices/modalSlice';
 
 export default function SelectForm({ actionType }: { actionType: string }): JSX.Element {
   const dispatch = useAppDispatch();
@@ -17,6 +18,7 @@ export default function SelectForm({ actionType }: { actionType: string }): JSX.
   const ID = useAppSelector((state) => state.modal.modals[0]?.ID);
   const ids = useParams<{ boardId: string }>();
   const boardId = ids.boardId as string;
+  const columns = useAppSelector((state) => state.board.board.lists);
   const [toBoard, setToBoard] = useState('');
   const [listId, setListId] = useState<number>(0);
   const [selectedCard, setSelectedCard] = useState<ICard>(Object);
@@ -76,7 +78,7 @@ export default function SelectForm({ actionType }: { actionType: string }): JSX.
       setPosition(foundCard.position);
       setSelectedCard(foundCard);
     }
-  }, [ID, cards]);
+  }, [ID, cards, position]);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>, itemName: string): void => {
     if (itemName === 'board') {
@@ -108,7 +110,7 @@ export default function SelectForm({ actionType }: { actionType: string }): JSX.
         });
         setListId(selectedList.id);
         setCards(cardsInList);
-        setPosition(cardsInList.length > 0 ? cardsInList[0].position || 1 : 1);
+        setPosition(cardsInList.length > 0 ? selectedCard.position : 1);
       }
     } else if (itemName === 'position') {
       setPosition(Number(event.currentTarget.value));
@@ -136,7 +138,7 @@ export default function SelectForm({ actionType }: { actionType: string }): JSX.
     } else if (actionType === 'move') {
       const Posprops: IEditPos = {
         elementId: Number(ID),
-        elementsArray: lists,
+        elementsArray: columns,
         itemName: 'card',
       };
       const addData = {
@@ -153,14 +155,14 @@ export default function SelectForm({ actionType }: { actionType: string }): JSX.
         refresh: toBoard === boardId,
       };
       const deleteData: ICardDelete = {
-        boardId: toBoard,
+        boardId,
         cardId: String(selectedCard.id),
       };
-
       const posArray = editPosition(Posprops);
       if (posArray.length > 0) await instance.put(`board/${boardId}/card`, posArray);
       await handleAdd(props);
       await dispatch(deleteCard(deleteData));
+      dispatch(closeModal());
       await dispatch(fetchBoard(boardId));
     }
   };
@@ -178,7 +180,7 @@ export default function SelectForm({ actionType }: { actionType: string }): JSX.
         <select name="board" key="board" onChange={(e) => handleChange(e, 'board')}>
           {boards &&
             boards.map((board) => (
-              <option key={board.id} value={board.id}>
+              <option key={board.id} value={board.id} selected={boardId === String(board.id)}>
                 {board.title}
               </option>
             ))}

@@ -8,13 +8,13 @@ import instance from '../../api/requests';
 import { IColorEdit } from '../../models/models';
 
 interface BodyColor {
-  color: string;
+  color: Record<string, string>;
   status: string;
   error: unknown;
 }
 
 const initialState: BodyColor = {
-  color: 'rgb(205, 90, 145)',
+  color: {},
   status: '',
   error: '',
 };
@@ -33,8 +33,9 @@ const bodyColorSlice = createSlice({
   name: 'color',
   initialState,
   reducers: {
-    setBodyColor: (state, action: PayloadAction<string>) => {
-      state.color = action.payload;
+    setBodyColor: (state, action: PayloadAction<{ key: string; color: string }>) => {
+      const { key, color } = action.payload;
+      state.color = { ...state.color, [key]: color };
     },
   },
   extraReducers: (builder) => {
@@ -50,5 +51,5 @@ const bodyColorSlice = createSlice({
 
 export const { setBodyColor } = bodyColorSlice.actions;
 
-export const selectBodyColor = (state: RootState): string => state.bodyColor.color;
+export const selectBodyColor = (state: RootState): Record<string, string> => state.bodyColor.color;
 export default bodyColorSlice.reducer;

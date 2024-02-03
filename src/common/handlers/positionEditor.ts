@@ -39,7 +39,6 @@ function extractNecessaryData({ elementId, elementsArray, itemName }: IEditPos):
   const foundList = elementsArray.find((list) => list.cards.some((card) => card.id === elementId));
 
   const filteredElements = extractFilteredElements(elementsArray, elementId);
-
   filteredElements.forEach((element) => {
     const newList: IEditedPos = {
       id: element.id,
@@ -55,15 +54,19 @@ function extractNecessaryData({ elementId, elementsArray, itemName }: IEditPos):
 
 export default function editPosition({ elementId, elementsArray, itemName }: IEditPos): Array<IEditedPos> {
   const resultArray: Array<IEditedPos> = extractNecessaryData({ elementId, elementsArray, itemName });
+  const cardsInList: Array<ICard> = extractCardsFromList(elementsArray, elementId);
 
+  const initialArray = itemName === 'card' ? cardsInList : elementsArray;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const movedElement: any = extractMovedElement(elementsArray, elementId);
 
-  if (movedElement && elementsArray.indexOf(movedElement) === 0) {
+  if (movedElement && initialArray.indexOf(movedElement) === 0) {
     resultArray.forEach((curr) => {
       // eslint-disable-next-line no-param-reassign
       curr.position -= 1;
     });
+  } else if (movedElement && initialArray.indexOf(movedElement) === initialArray.length - 1) {
+    return [];
   } else {
     resultArray.forEach((curr, index, array) => {
       if (index + 1 < array.length) {

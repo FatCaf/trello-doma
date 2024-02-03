@@ -6,6 +6,7 @@ import { IHandleEdit } from '../models/models';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { closeModal } from '../store/slices/modalSlice';
 import { handleEdit } from '../common/handlers/handlers';
+import { setBodyColor } from '../store/slices/bodyColorSlice';
 
 const Settings = memo((): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -29,6 +30,7 @@ const Settings = memo((): JSX.Element => {
       data: editData,
     };
     await handleEdit(props);
+    dispatch(setBodyColor({ key: boardId, color: clickedColor }));
   };
 
   return (

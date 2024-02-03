@@ -13,13 +13,13 @@ import { IHandleDelete } from '../models/models';
 export default function BoardSideBar(): JSX.Element {
   const dispatch = useAppDispatch();
   const [isHidden, setHidden] = useState(false);
-  // const { status } = useAppSelector((state) => state.boards);
+  const color = useAppSelector((state) => state.bodyColor.color);
   const { boards } = useAppSelector((state) => state.boards);
   const { modals } = useAppSelector((state) => state.modal);
 
   useEffect(() => {
     dispatch(fetchBoards());
-  }, [dispatch]);
+  }, [dispatch, color]);
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>): void => {
     const props: IHandleDelete = {

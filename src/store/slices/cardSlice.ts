@@ -78,7 +78,7 @@ const cardSlice = createSlice({
       state.error = action.payload;
     });
     builder.addCase(deleteCard.fulfilled, (state) => {
-      state.status = 'resolved';
+      state.status = 'deleted';
     });
   },
 });
