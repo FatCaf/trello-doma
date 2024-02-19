@@ -15,9 +15,21 @@ import {
   IHandleDelete,
   IHandleEdit,
 } from '../../models/models';
-import { addBoard, deleteBoard, fetchBoards } from '../../store/slices/homeSlice';
+import { addBoard, deleteBoard, deleteBoardLocally, fetchBoards } from '../../store/slices/homeSlice';
 import { addCard, deleteCard, editCard } from '../../store/slices/cardSlice';
-import { addColumn, deleteColumn, editBoard, editColumn, fetchBoard } from '../../store/slices/boardSlice';
+import {
+  addColumn,
+  deleteCardLocally,
+  deleteColumn,
+  deleteColumnLocally,
+  editBoard,
+  editBoardColorLocally,
+  editBoardLocally,
+  editCardLocally,
+  editColumn,
+  editColumnLocally,
+  fetchBoard,
+} from '../../store/slices/boardSlice';
 import { editColor } from '../../store/slices/bodyColorSlice';
 import { closeModal } from '../../store/slices/modalSlice';
 
@@ -37,7 +49,7 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
       func = async (): Promise<void> => {
         try {
           await dispatch(deleteBoard(boardId));
-          await dispatch(fetchBoards());
+          dispatch(deleteBoardLocally(boardId));
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
@@ -56,7 +68,7 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
       func = async (): Promise<void> => {
         try {
           await dispatch(deleteColumn(deleteData as IColumnDelete));
-          await dispatch(fetchBoard(boardId));
+          dispatch(deleteColumnLocally(id));
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
@@ -75,7 +87,7 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
         try {
           await dispatch(deleteCard(deleteData as ICardDelete));
           dispatch(closeModal());
-          await dispatch(fetchBoard(boardId));
+          dispatch(deleteCardLocally(id));
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
@@ -120,7 +132,7 @@ export const handleEdit = async (props: IHandleEdit): Promise<void> => {
         try {
           event.preventDefault();
           await dispatch(editColumn(editData as IColumnEdit));
-          await dispatch(fetchBoard(boardId));
+          dispatch(editColumnLocally(editData as IColumnEdit));
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
@@ -135,7 +147,7 @@ export const handleEdit = async (props: IHandleEdit): Promise<void> => {
       func = async (): Promise<void> => {
         try {
           await dispatch(editBoard(editData as IBoardEdit));
-          await dispatch(fetchBoard(boardId));
+          dispatch(editBoardLocally(editData as IBoardEdit));
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
@@ -150,7 +162,7 @@ export const handleEdit = async (props: IHandleEdit): Promise<void> => {
       func = async (): Promise<void> => {
         try {
           await dispatch(editColor(editData as IColorEdit));
-          await dispatch(fetchBoard(boardId));
+          dispatch(editBoardColorLocally(editData as IColorEdit));
         } catch (error) {
           const e = error as string;
           throw new Error(e);
@@ -167,7 +179,7 @@ export const handleEdit = async (props: IHandleEdit): Promise<void> => {
         try {
           event.preventDefault();
           await dispatch(editCard(editData as ICardEdit));
-          await dispatch(fetchBoard(boardId));
+          dispatch(editCardLocally(editData as ICardEdit));
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);

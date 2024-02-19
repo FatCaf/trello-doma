@@ -49,7 +49,11 @@ export const deleteBoard = createAsyncThunk('boards/deleteBoard', async (boardId
 const homeSlice = createSlice({
   name: 'boards',
   initialState,
-  reducers: {},
+  reducers: {
+    deleteBoardLocally: (state, action) => {
+      state.boards = state.boards.filter((board) => board.id !== Number(action.payload));
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchBoards.pending, (state) => {
       state.status = 'loading';
@@ -81,5 +85,6 @@ const homeSlice = createSlice({
 });
 
 export const selectBoards = (state: { boards: HomeSlice }): BoardPreviewTile[] => state.boards.boards;
+export const { deleteBoardLocally } = homeSlice.actions;
 
 export default homeSlice.reducer;

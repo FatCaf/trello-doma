@@ -1,7 +1,16 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
-import { IBoard, IColumn, IBoardEdit, IChangePos, IColumnDelete, IColumnEdit, IColumnPost } from '../../models/models';
+import {
+  IBoard,
+  IColumn,
+  IBoardEdit,
+  IColumnDelete,
+  IColumnEdit,
+  IColumnPost,
+  ICardEdit,
+  IColorEdit,
+} from '../../models/models';
 import instance from '../../api/requests';
 
 interface BoardSlice {
@@ -73,21 +82,45 @@ export const deleteColumn = createAsyncThunk('board/deleteColumn', async (delDat
   }
 });
 
-export const editColPos = createAsyncThunk('board/editColPos', async (editData: IChangePos) => {
-  const { boardId, listId, data } = editData;
-
-  try {
-    await instance.put(`board/${boardId}/list/${listId}`, data);
-  } catch (error) {
-    const e = error as AxiosError;
-    throw new Error(e.message);
-  }
-});
-
 const boardSlice = createSlice({
   name: 'board',
   initialState,
-  reducers: {},
+  reducers: {
+    deleteColumnLocally: (state, action) => {
+      state.board.lists = state.board.lists.filter((list) => list.id !== Number(action.payload));
+    },
+    deleteCardLocally: (state, action) => {
+      state.board.lists.forEach(
+        (list) => (list.cards = list.cards.filter((card) => card.id !== Number(action.payload)))
+      );
+    },
+    editBoardLocally: (state, action: PayloadAction<IBoardEdit>) => {
+      const { title } = action.payload.data;
+      state.board.title = title;
+    },
+    editColumnLocally: (state, action: PayloadAction<IColumnEdit>) => {
+      const { listId, data } = action.payload;
+      const editedList = state.board.lists.find((list) => list.id === Number(listId));
+      if (editedList) editedList.title = data.title;
+    },
+    editCardLocally: (state, action: PayloadAction<ICardEdit>) => {
+      const { cardId, data } = action.payload;
+
+      const foundList = state.board.lists.find((list) => list.cards.some((card) => card.id === Number(cardId)));
+      if (foundList) {
+        const foundCard = foundList.cards.find((card) => card.id === Number(cardId));
+
+        if (foundCard) {
+          if (foundCard.title === data.title) foundCard.description = data.description as string;
+          foundCard.title = data.title as string;
+        }
+      }
+    },
+    editBoardColorLocally: (state, action: PayloadAction<IColorEdit>) => {
+      const { data } = action.payload;
+      state.board.custom.background = data.custom.background;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchBoard.pending, (state) => {
       state.status = 'loading';
@@ -119,4 +152,12 @@ const boardSlice = createSlice({
   },
 });
 
+export const {
+  deleteColumnLocally,
+  deleteCardLocally,
+  editBoardLocally,
+  editColumnLocally,
+  editCardLocally,
+  editBoardColorLocally,
+} = boardSlice.actions;
 export default boardSlice.reducer;
