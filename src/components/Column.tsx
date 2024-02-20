@@ -76,8 +76,65 @@ export default function Column({ id, title, cards }: IColumn): JSX.Element {
     }
   };
 
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>): void => {
+    console.log(e.currentTarget);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>): void => {
+    e.preventDefault();
+  };
+
+  // const onDragEnterHandler = (e) => {
+  //   e.preventDefault();
+  // };
+  // const onDragOverHandler = (e) => {
+  //   e.preventDefault();
+  //   if (e.target.className === "boardContentArea") {
+  //     setTimeout(() => {
+  //       e.target.className = "boardContentArea hovered";
+  //     }, 0);
+  //   }
+  // };
+  // const onDragLeaveHandler = (e) => {
+  //   e.preventDefault();
+  //   if (e.target.className === "boardContentArea hovered") {
+  //     setTimeout(() => {
+  //       e.target.className = "boardContentArea";
+  //     }, 0);
+  //   }
+  // };
+  // const onDropHandler = (e) => {
+  //   let cardInfo = JSON.parse(e.dataTransfer.getData("cardInfo"));
+  //   let targetCardId = e.target.id;
+  //   onChange(cardInfo, status, targetCardId);
+  //   if (e.target.className === "boardContentArea hovered") {
+  //     setTimeout(() => {
+  //       e.target.className = "boardContentArea";
+  //     }, 0);
+  //   }
+  // };
+
+  // // returns JSX - Render cards
+  // const renderCards = () => {
+  //   return sorted.map((item) => (
+  //     <TrelloCard
+  //       key={`status-${item.id}`}
+  //       id={item.id}
+  //       status={status}
+  //       title={item.title}
+  //       label={item.label}
+  //     />
+  //   ));
+  // };
+
   return (
-    <div className="column" id={`${id}`} key={id}>
+    <div
+      className="column"
+      id={`${id}`}
+      key={id}
+      onDragLeave={(e: React.DragEvent<HTMLDivElement>) => handleDragLeave(e)}
+      onDragOver={(e: React.DragEvent<HTMLDivElement>) => handleDragOver(e)}
+    >
       <div className="column__header">
         <div className="column__title">
           {isColumnTitleClicked ? (
@@ -105,12 +162,8 @@ export default function Column({ id, title, cards }: IColumn): JSX.Element {
         </div>
       </div>
       <div className="column__cards">
-        <div className="drop__zone">
-          {cards &&
-            [...cards]
-              .sort((cur, next) => cur.position - next.position)
-              .map((card) => <Card {...card} key={card.id} />)}
-        </div>
+        {cards &&
+          [...cards].sort((cur, next) => cur.position - next.position).map((card) => <Card {...card} key={card.id} />)}
         <div className="add__card">
           {isCardAddClicked ? (
             <InputField

@@ -2,7 +2,7 @@
 @import './mixines.scss';
 
 .column {
-  padding: 0.625rem 0.3125rem;
+  padding: 0.75rem;
   border-radius: 8px;
   background-color: $tile-bgc;
   flex-shrink: 0;
@@ -56,7 +56,7 @@
   justify-content: center;
   align-items: start;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
 }
 
 .drop__zone {
