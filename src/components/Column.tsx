@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import * as React from 'react';
 import { useParams } from 'react-router';
 import Card from './Card';
@@ -20,6 +20,7 @@ export default function Column({ id, title, cards }: IColumn): JSX.Element {
   const [isCardAddClicked, setCardAddClicked] = useState(false);
   const [cardTitle, setCardTitle] = useState('Безіменна картка');
   const [columnTitle, setColumnTitle] = useState('Безіменна колонка');
+  const columnRef = useRef<HTMLDivElement>(null);
 
   const handleClick = async (event: React.MouseEvent<HTMLDivElement>): Promise<void> => {
     const Posprops: IEditPos = {
@@ -76,64 +77,49 @@ export default function Column({ id, title, cards }: IColumn): JSX.Element {
     }
   };
 
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>): void => {
-    console.log(e.currentTarget);
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>): void => {
+  const onDragEnterHandler = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
   };
 
-  // const onDragEnterHandler = (e) => {
-  //   e.preventDefault();
-  // };
-  // const onDragOverHandler = (e) => {
-  //   e.preventDefault();
-  //   if (e.target.className === "boardContentArea") {
-  //     setTimeout(() => {
-  //       e.target.className = "boardContentArea hovered";
-  //     }, 0);
-  //   }
-  // };
-  // const onDragLeaveHandler = (e) => {
-  //   e.preventDefault();
-  //   if (e.target.className === "boardContentArea hovered") {
-  //     setTimeout(() => {
-  //       e.target.className = "boardContentArea";
-  //     }, 0);
-  //   }
-  // };
-  // const onDropHandler = (e) => {
-  //   let cardInfo = JSON.parse(e.dataTransfer.getData("cardInfo"));
-  //   let targetCardId = e.target.id;
-  //   onChange(cardInfo, status, targetCardId);
-  //   if (e.target.className === "boardContentArea hovered") {
-  //     setTimeout(() => {
-  //       e.target.className = "boardContentArea";
-  //     }, 0);
-  //   }
-  // };
+  const onDragOverHandler = (e: React.DragEvent<HTMLDivElement>): void => {
+    e.preventDefault();
+    if (columnRef.current && columnRef.current.className === 'column') {
+      setTimeout(() => {
+        columnRef.current?.classList.add('hovered');
+      }, 0);
+    }
+  };
 
-  // // returns JSX - Render cards
-  // const renderCards = () => {
-  //   return sorted.map((item) => (
-  //     <TrelloCard
-  //       key={`status-${item.id}`}
-  //       id={item.id}
-  //       status={status}
-  //       title={item.title}
-  //       label={item.label}
-  //     />
-  //   ));
-  // };
+  const onDragLeaveHandler = (e: React.DragEvent<HTMLDivElement>): void => {
+    e.preventDefault();
+    if (columnRef.current && columnRef.current.className === 'column hovered') {
+      setTimeout(() => {
+        columnRef.current?.classList.remove('hovered');
+      }, 0);
+    }
+  };
+  const onDropHandler = (e: React.DragEvent<HTMLDivElement>): void => {
+    const cardInfo = JSON.parse(e.dataTransfer.getData('cardInfo'));
+    console.log(cardInfo);
+    // const targetCardId = e.currentTarget.id;
+    // onChange(cardInfo, status, targetCardId);
+    // if (e.currentTarget.className === "column hovered") {
+    //   setTimeout(() => {
+    //     e.currentTarget.className = "column";
+    //   }, 0);
+    // }
+  };
 
   return (
     <div
       className="column"
       id={`${id}`}
       key={id}
-      onDragLeave={(e: React.DragEvent<HTMLDivElement>) => handleDragLeave(e)}
-      onDragOver={(e: React.DragEvent<HTMLDivElement>) => handleDragOver(e)}
+      ref={columnRef}
+      onDragLeave={(e: React.DragEvent<HTMLDivElement>) => onDragLeaveHandler(e)}
+      onDragEnter={(e: React.DragEvent<HTMLDivElement>) => onDragEnterHandler(e)}
+      onDrop={(e: React.DragEvent<HTMLDivElement>) => onDropHandler(e)}
+      onDragOver={(e: React.DragEvent<HTMLDivElement>) => onDragOverHandler(e)}
     >
       <div className="column__header">
         <div className="column__title">

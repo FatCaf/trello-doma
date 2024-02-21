@@ -7,7 +7,7 @@ import '../styles/Card.scss';
 import { useAppDispatch } from '../store/hooks';
 import { openModal } from '../store/slices/modalSlice';
 
-export default function ColumnCard({ id, title }: ICard): JSX.Element {
+export default function ColumnCard({ id, title, description, list_id, position, users, custom }: ICard): JSX.Element {
   const dispatch = useAppDispatch();
   const ids = useParams<{ boardId: string }>();
   const boardId = ids.boardId as string;
@@ -23,12 +23,6 @@ export default function ColumnCard({ id, title }: ICard): JSX.Element {
     dispatch(openModal({ modalName: modal, ID }));
   };
 
-  // const handleDragStart = (e: React.DragEvent<HTMLDivElement>): void => {
-  //   dispatch(dragStart(e.currentTarget));
-  //   const { width, height } = e.currentTarget.getBoundingClientRect();
-  //   dispatch(setSlotStyle({ width, height }));
-  // };
-
   const [onHold, setOnHold] = useState(false);
 
   const resetClassName = (e: React.DragEvent<HTMLDivElement>): void => {
@@ -42,7 +36,7 @@ export default function ColumnCard({ id, title }: ICard): JSX.Element {
   };
 
   const dragStartHandler = (e: React.DragEvent<HTMLDivElement>): void => {
-    e.dataTransfer.setData('cardInfo', JSON.stringify({ id, title }));
+    e.dataTransfer.setData('cardInfo', JSON.stringify({ id, title, description, list_id, position, users, custom }));
     e.currentTarget.className += ' ohhold';
     setTimeout(() => {
       setOnHold(true);
