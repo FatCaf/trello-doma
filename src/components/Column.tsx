@@ -10,6 +10,7 @@ import InputField from './InputField';
 import { handleAdd, handleDelete, handleEdit } from '../common/handlers/handlers';
 import editPosition from '../common/handlers/positionEditor';
 import instance from '../api/requests';
+import { deleteCard } from '../store/slices/cardSlice';
 
 export default function Column({ id, title, cards }: IColumn): JSX.Element {
   const ids = useParams<{ boardId: string }>();
@@ -98,16 +99,33 @@ export default function Column({ id, title, cards }: IColumn): JSX.Element {
       }, 0);
     }
   };
-  const onDropHandler = (e: React.DragEvent<HTMLDivElement>): void => {
-    const cardInfo = JSON.parse(e.dataTransfer.getData('cardInfo'));
-    console.log(cardInfo);
-    // const targetCardId = e.currentTarget.id;
-    // onChange(cardInfo, status, targetCardId);
-    // if (e.currentTarget.className === "column hovered") {
-    //   setTimeout(() => {
-    //     e.currentTarget.className = "column";
-    //   }, 0);
-    // }
+  const onDropHandler = async (e: React.DragEvent<HTMLDivElement>): Promise<void> => {
+    let cardInfo = JSON.parse(e.dataTransfer.getData('cardInfo'));
+
+    if (cardInfo.list_id !== e.currentTarget.id) {
+      cardInfo = { ...cardInfo, list_id: Number(e.currentTarget.id) };
+      // eslint-disable-next-line @typescript-eslint/no-shadow
+      const { id, ...rest } = cardInfo;
+
+      const Posprops: IEditPos = {
+        elementsArray: lists,
+        elementId: Number(e.currentTarget.id),
+        itemName: 'card',
+      };
+
+      const posArray = editPosition(Posprops);
+
+      const props: IHandleAdd = {
+        itemName: 'addCard',
+        dispatch,
+        data: rest,
+        boardId,
+        refresh: true,
+      };
+      await dispatch(deleteCard({ boardId, cardId: id }));
+      await handleAdd(props);
+      if (posArray.length > 0) await instance.put(`board/${boardId}/card`, posArray);
+    }
   };
 
   return (

@@ -27,6 +27,7 @@ export default function Board(): JSX.Element {
   const backgroundColor = useAppSelector((state) => state.board.board.custom.background);
   const { modals } = useAppSelector((state) => state.modal);
   const [isAddColumnClicked, setAddColumnClicked] = useState(false);
+  const urlParams = window.location.href.toString().split('/');
 
   useEffect(() => {
     dispatch(fetchBoard(boardId));
@@ -63,7 +64,7 @@ export default function Board(): JSX.Element {
       <div className="board__wrapper">
         <BoardHeader boardTitle={board.title} backgroundColor={backgroundColor} />
         <div className="board__main__content">
-          {modals[0]?.modalName === 'card' && <CardModal />}
+          {(modals[0]?.modalName === 'card' || urlParams.includes('card')) && <CardModal />}
           <div className="columns" key="columns">
             {lists && lists.map((list) => <Column {...list} key={list?.id} />)}
             <div className="add__column__wrapper">
