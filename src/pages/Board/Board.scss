@@ -1,0 +1,93 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixines.scss';
+
+.board {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  overflow: hidden;
+}
+
+.board__wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.board__main__content {
+  overflow-x: auto;
+  flex-grow: 1;
+  padding: 0 6px;
+}
+
+::-webkit-scrollbar {
+  height: 12px;
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  margin-block: 10px;
+  margin-inline: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.columns {
+  position: relative;
+  margin-top: 0.9375rem;
+  display: flex;
+  align-items: start;
+  flex-shrink: 0;
+  gap: 10px;
+  padding: 0 6px;
+}
+
+.add__column__wrapper {
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+
+.add__column {
+  cursor: pointer;
+  background-color: transparent;
+  background: rgba($color: #fff, $alpha: 0.3);
+  border-radius: 0.5rem;
+  padding: 0.3125rem 10px;
+  color: $secondary-text-color;
+  flex-shrink: 0;
+  & span {
+    font-size: 1.125rem;
+  }
+  &:hover {
+    background: rgba($color: #fff, $alpha: 0.6);
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .board__main__content::-webkit-scrollbar {
+    width: 0;
+  }
+
+  .columns {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .add__column__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 15px;
+    width: 100%;
+  }
+
+  .add__column {
+    width: 100%;
+  }
+}

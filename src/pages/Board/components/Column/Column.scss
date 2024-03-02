@@ -1,0 +1,83 @@
+@import '../../../../styles/variables.scss';
+@import '../../../../styles/mixines.scss';
+
+.column {
+  padding: 0.75rem;
+  border-radius: 8px;
+  background-color: $tile-bgc;
+  flex-shrink: 0;
+  box-shadow: 0 0 5px gray;
+}
+
+.column__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  &:hover {
+    @include setBackgroundHoveColor(gray, 0.2);
+    border-radius: 4px;
+  }
+  &:hover .column__delete {
+    visibility: initial;
+  }
+}
+
+.column__delete {
+  cursor: pointer;
+  color: $main-text-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  & div {
+    transition: background-color 0.2s linear;
+    padding: 4px;
+    font-size: 1.125rem;
+  }
+  &:hover div {
+    @include setBackgroundHoveColor($main-text-color, 0.5);
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+}
+
+.column__title {
+  padding: 5px 5px;
+  cursor: pointer;
+  color: $main-text-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.column__cards {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add__card {
+  cursor: pointer;
+  color: $main-text-color;
+  border-radius: 0.5rem;
+  padding: 0.3125rem 10px;
+  &:hover {
+    @include setBackgroundHoveColor(gray, 0.2);
+  }
+  & span {
+    font-size: 1.125rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .column {
+    width: 100%;
+  }
+
+  .column__delete {
+    visibility: inherit;
+  }
+}

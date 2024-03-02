@@ -1,0 +1,99 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/mixines.scss';
+
+.board__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: $tile-bgc;
+  padding: 0.625rem 0.625rem;
+  background-color: transparent;
+  border-bottom: 1px solid gray;
+  background: rgba(0, 0, 0, 0.4);
+  & h2 {
+    cursor: pointer;
+  }
+  & h2:hover {
+    border-radius: 4px;
+    @include setBackgroundHoveColor($main-text-color, 0.4);
+  }
+}
+
+.settings {
+  cursor: pointer;
+  border-radius: 0.25rem;
+  width: 1.875rem;
+  height: 1.875rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    @include setBackgroundHoveColor($main-text-color, 0.4);
+  }
+}
+
+.bars {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+  transform: translateY(0);
+  transition:
+    transform 0.2s linear,
+    opacity 0.2s linear;
+
+  &.active {
+    transform: translateY(230%);
+    opacity: 0;
+  }
+}
+
+.bar {
+  background-color: $tile-bgc;
+  width: 20px;
+  height: 2px;
+  border-radius: 4px;
+}
+
+.container-head-board {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 5px;
+}
+
+.hide.onboard {
+  display: none;
+  position: static;
+}
+
+@media screen and (max-width: 500px) {
+  .container-head-board {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    width: 100%;
+    padding: 0 5px;
+  }
+
+  .settings {
+    @include setBackgroundHoveColor($main-text-color, 0.6);
+  }
+
+  .bars.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hide.onboard {
+    display: block;
+    @include setBackgroundHoveColor($main-text-color, 0.6);
+  }
+
+  .board__name {
+    font-size: 14px;
+  }
+}

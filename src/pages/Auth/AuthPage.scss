@@ -1,0 +1,73 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixines.scss';
+
+.auth__page {
+  display: flex;
+  height: 100dvh;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth__box {
+  border-radius: 6px;
+  box-shadow: $box-shadow;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 400px;
+  padding: 40px;
+  gap: 20px;
+}
+
+.auth__header {
+  width: 100%;
+  color: $main-text-color;
+  text-align: center;
+  & h6 {
+    font-size: 18px;
+    font-weight: 700;
+  }
+}
+
+.auth__form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.auth__label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  color: $main-text-color;
+  width: 100%;
+}
+
+.auth__input {
+  padding: 5px;
+  width: 100%;
+}
+
+.auth__error {
+  color: red;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.to__sign__in {
+  cursor: pointer;
+  color: $main-text-color;
+  &:hover {
+    color: blue;
+    text-decoration: underline;
+  }
+}
+
+.add.auth {
+  @include setBackgroundHoveColor($main-text-color, 0.5);
+}

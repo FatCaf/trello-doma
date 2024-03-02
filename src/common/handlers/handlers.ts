@@ -88,6 +88,7 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
           await dispatch(deleteCard(deleteData as ICardDelete));
           dispatch(closeModal());
           dispatch(deleteCardLocally(id));
+          window.location.href = `/board/${boardId}`;
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);

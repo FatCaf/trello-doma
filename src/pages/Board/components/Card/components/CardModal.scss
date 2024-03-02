@@ -1,0 +1,271 @@
+@import '../../../../../styles/mixines.scss';
+@import '../../../../../styles/variables.scss';
+
+.card__modal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  background-color: $tile-bgc;
+  border-radius: 8px;
+  color: $main-text-color;
+  min-height: 500px;
+  max-width: 500px;
+}
+
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 5px 10px;
+}
+
+.cancel.cancel-card {
+  align-self: center;
+}
+
+.titles {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 20px;
+  & h4 {
+    cursor: pointer;
+  }
+}
+
+.main__content {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  flex-direction: column-reverse;
+  width: 100%;
+  padding: 5px 10px;
+  height: 100%;
+  min-height: 400px;
+  gap: 15px;
+}
+
+.block__one {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+}
+
+.users {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 5px;
+  & h6 {
+    font-size: 18px;
+  }
+}
+
+.users__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 5px 0;
+  gap: 5px;
+}
+
+.user__list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+}
+
+.description {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 5px;
+  width: 100%;
+}
+
+.description__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+  & h6 {
+    font-size: 18px;
+  }
+}
+
+.description__text {
+  text-align: start;
+  & p {
+    cursor: pointer;
+  }
+}
+
+.actions {
+  display: flex;
+  position: relative;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  padding: 5px;
+  & h6 {
+    font-size: 18px;
+  }
+}
+
+.copy {
+  padding: 5px;
+  background-color: $tile-bgc;
+  border-radius: 6px;
+  box-shadow: $box-shadow;
+  width: 100%;
+  text-align: center;
+  color: $main-text-color;
+  cursor: pointer;
+  &:hover {
+    @include setBackgroundHoveColor($border-hover-color, 0.6);
+    color: $tile-bgc;
+    box-shadow: none;
+  }
+}
+
+.move {
+  padding: 5px;
+  background-color: $tile-bgc;
+  border-radius: 6px;
+  box-shadow: $box-shadow;
+  width: 100%;
+  text-align: center;
+  color: $main-text-color;
+  cursor: pointer;
+  &:hover {
+    @include setBackgroundHoveColor($border-hover-color, 0.6);
+    color: $tile-bgc;
+    box-shadow: none;
+  }
+}
+
+.archive {
+  padding: 5px;
+  background-color: $tile-bgc;
+  border-radius: 6px;
+  box-shadow: $box-shadow;
+  width: 100%;
+  text-align: center;
+  color: $main-text-color;
+  cursor: pointer;
+  &:hover {
+    @include setBackgroundHoveColor($no-color, 0.8);
+    color: $tile-bgc;
+    box-shadow: none;
+  }
+}
+
+.join {
+  padding: 5px;
+  background-color: $tile-bgc;
+  border-radius: 6px;
+  box-shadow: $box-shadow;
+  text-align: center;
+  color: $main-text-color;
+  cursor: pointer;
+  align-self: start;
+  margin-top: 4px;
+  &:hover {
+    @include setBackgroundHoveColor($yes-color, 0.8);
+    color: $tile-bgc;
+    box-shadow: none;
+  }
+}
+
+.change {
+  padding: 5px;
+  background-color: $tile-bgc;
+  border-radius: 6px;
+  box-shadow: $box-shadow;
+  width: 35%;
+  text-align: center;
+  color: $main-text-color;
+  cursor: pointer;
+  &:hover {
+    @include setBackgroundHoveColor($border-hover-color, 0.6);
+    color: $tile-bgc;
+    box-shadow: none;
+  }
+}
+
+.user__add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @include setBackgroundHoveColor($yes-color, 0.4);
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 9px;
+  align-self: start;
+  margin-top: 4px;
+  &:hover {
+    @include setBackgroundHoveColor($yes-color, 0.8);
+  }
+}
+
+.edit__description {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.description__area {
+  border: none;
+  font-family: 'Nunito', 'sans-serif';
+  font-size: 16px;
+  resize: none;
+}
+
+.button__block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 50%;
+}
+
+.cancel.btn {
+  font-weight: 400;
+  font-size: 16px;
+  padding: 5px;
+  width: 35%;
+  box-shadow: $box-shadow;
+}
+
+.save {
+  padding: 5px;
+  background-color: $tile-bgc;
+  border-radius: 4px;
+  box-shadow: $box-shadow;
+  text-align: center;
+  color: $main-text-color;
+  font-size: 16px;
+  width: 35%;
+  cursor: pointer;
+  &:hover {
+    @include setBackgroundHoveColor($border-hover-color, 0.6);
+    color: $tile-bgc;
+    box-shadow: none;
+  }
+}
+
+.empty {
+  background-color: gray;
+  border-radius: 4px;
+  padding: 5px;
+  width: 100%;
+  color: $tile-bgc;
+}

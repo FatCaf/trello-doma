@@ -178,3 +178,14 @@ export interface ICardAction {
   actionType: string;
   onClose: () => void;
 }
+
+export interface AuthResponse {
+  result: string;
+  token: string;
+  refreshToken: string;
+}
+
+export interface SignUpResponse {
+  result: string;
+  id: number;
+}
