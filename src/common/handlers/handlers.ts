@@ -88,7 +88,7 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
           await dispatch(deleteCard(deleteData as ICardDelete));
           dispatch(closeModal());
           dispatch(deleteCardLocally(id));
-          window.location.href = `/board/${boardId}`;
+          window.location.href = `/trello-doma/board/${boardId}`;
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
@@ -109,8 +109,6 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
       },
       {
         label: 'Ні',
-        // eslint-disable-next-line no-console
-        onClick: () => console.log('no delete'),
       },
     ],
   });

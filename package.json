@@ -3,14 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://fatcaf.github.io/",
+  "homepage": "https://fatcaf.github.io/trello-doma",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --base=./",
+    "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "prepare": "husky install",
-    "deploy": "gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": "eslint --fix",

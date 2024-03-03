@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './AuthPage.scss';
 import { useNavigate } from 'react-router';
 import PassWordStrengthChecker from './PasswordStrengthChecker';
@@ -20,6 +20,12 @@ export default function AuthPage(): JSX.Element {
   });
   const [signInClicked, setSignInClicked] = useState(false);
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    if (token) navigate('/home');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setAuthForm((prev) => ({

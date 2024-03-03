@@ -27,7 +27,7 @@ export default function Board(): JSX.Element {
   const backgroundColor = useAppSelector((state) => state.board.board.custom.background);
   const { modals } = useAppSelector((state) => state.modal);
   const [isAddColumnClicked, setAddColumnClicked] = useState(false);
-  const urlParams = window.location.href.toString().split('/');
+  const urlParams = window.location.href.split('/');
 
   useEffect(() => {
     dispatch(fetchBoard(boardId));

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
 import Board from './pages/Board/Board';
 import Home from './pages/Home/Home';
@@ -7,20 +7,16 @@ import CardModal from './pages/Board/components/Card/components/CardModal';
 import AuthPage from './pages/Auth/AuthPage';
 
 export default function App(): JSX.Element {
+  const currentLocation = window.location.href;
+
   useEffect(() => {
-    const handleBrowserBack = (): void => {
+    if (currentLocation.match(/\/\/.*home/)) {
       document.body.style.backgroundColor = '#f1f2f4';
-    };
-
-    window.addEventListener('popstate', handleBrowserBack);
-
-    return () => {
-      window.removeEventListener('popstate', handleBrowserBack);
-    };
-  }, []);
+    }
+  }, [currentLocation]);
 
   return (
-    <Router>
+    <>
       <Navbar />
       <Routes>
         <Route path="/home" element={<Home />} />
@@ -29,6 +25,6 @@ export default function App(): JSX.Element {
         </Route>
         <Route path="/" element={<AuthPage />} index />
       </Routes>
-    </Router>
+    </>
   );
 }
