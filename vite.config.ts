@@ -11,5 +11,5 @@ export default defineConfig({
     'process.env': {},
     __VALUE__: `${process.env.VITE__VALUE}`,
   },
-  base: '/trello-doma',
+  base: './',
 });
