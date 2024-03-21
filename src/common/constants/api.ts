@@ -1,3 +1,3 @@
 export default {
-  baseURL: import.meta.env.VITE__VALUE || 'api url not defined',
+  baseURL: 'https://trello-back.shpp.me/mneklesa/api/v1',
 };
