@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { fetchBoards } from '../../../../store/slices/homeSlice';
 import './BoardSidebar.scss';
 import BoardPreview from '../../../../components/BoardPreview';
-import { openModal } from '../../../../store/slices/modalSlice';
 import addSvg from '../../../../assets/add.svg';
 import AddBoardModal from '../../../../components/AddBoardModal';
 import { handleDelete } from '../../../../common/handlers/handlers';
@@ -13,9 +12,9 @@ import { IHandleDelete } from '../../../../models/models';
 export default function BoardSideBar(): JSX.Element {
   const dispatch = useAppDispatch();
   const [isHidden, setHidden] = useState(false);
-  const color = useAppSelector((state) => state.bodyColor.color);
+  const color = useAppSelector((state) => state.board.board.custom.background);
   const { boards } = useAppSelector((state) => state.boards);
-  const { modals } = useAppSelector((state) => state.modal);
+  const [addBoardClick, setAddBoardClick] = useState(false);
 
   useEffect(() => {
     dispatch(fetchBoards());
@@ -23,17 +22,12 @@ export default function BoardSideBar(): JSX.Element {
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>): void => {
     const props: IHandleDelete = {
-      itemName: 'board',
+      action: 'deleteBoard',
       event,
       dispatch,
       boardId: event.currentTarget.id,
     };
     handleDelete(props);
-  };
-
-  const handleModalClick = (modal: string | null, event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
-    event.stopPropagation();
-    dispatch(openModal({ modalName: modal }));
   };
 
   return (
@@ -60,11 +54,7 @@ export default function BoardSideBar(): JSX.Element {
           <div className="sidebar__title">
             <h2>Мої дошки</h2>
           </div>
-          <div
-            className="sidebar__add"
-            data-name="add-board"
-            onClick={(event) => handleModalClick(event.currentTarget.getAttribute('data-name'), event)}
-          >
+          <div className="sidebar__add" data-name="add-board" onClick={() => setAddBoardClick(!addBoardClick)}>
             <img src={addSvg} alt="Додати" />
           </div>
         </div>
@@ -82,7 +72,7 @@ export default function BoardSideBar(): JSX.Element {
             </div>
           ))}
       </div>
-      {modals[0]?.modalName === 'add-board' && <AddBoardModal />}
+      {addBoardClick && <AddBoardModal onClose={() => setAddBoardClick(!addBoardClick)} />}
     </aside>
   );
 }

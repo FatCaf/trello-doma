@@ -6,35 +6,30 @@ import {
   IBoardPost,
   ICardDelete,
   ICardEdit,
+  ICardEditPos,
   ICardPost,
-  IColorEdit,
   IColumnDelete,
   IColumnEdit,
+  IColumnEditPos,
   IColumnPost,
   IHandleAdd,
   IHandleDelete,
   IHandleEdit,
 } from '../../models/models';
-import { addBoard, deleteBoard, deleteBoardLocally, fetchBoards } from '../../store/slices/homeSlice';
+import { addBoard, deleteBoard, fetchBoards } from '../../store/slices/homeSlice';
 import { addCard, deleteCard, editCard } from '../../store/slices/cardSlice';
 import {
   addColumn,
-  deleteCardLocally,
   deleteColumn,
-  deleteColumnLocally,
   editBoard,
-  editBoardColorLocally,
-  editBoardLocally,
-  editCardLocally,
+  editCardsPosition,
   editColumn,
-  editColumnLocally,
+  editColumnsPosition,
   fetchBoard,
 } from '../../store/slices/boardSlice';
-import { editColor } from '../../store/slices/bodyColorSlice';
-import { closeModal } from '../../store/slices/modalSlice';
 
 export const handleDelete = async (props: IHandleDelete): Promise<void> => {
-  const { itemName, event, dispatch, boardId } = props;
+  const { action, event, dispatch, boardId } = props;
   const name = event.currentTarget.getAttribute('data-name');
   const id = String(event.currentTarget.getAttribute('id'));
   let title = '';
@@ -42,14 +37,14 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
   let func: () => Promise<void> = async () => {};
   let deleteData: object;
 
-  switch (itemName) {
-    case 'board':
+  switch (action) {
+    case 'deleteBoard':
       title = 'Видалити дошку';
       message = `Чи точно ви хочете видалити дошку ${name} ?`;
       func = async (): Promise<void> => {
         try {
           await dispatch(deleteBoard(boardId));
-          dispatch(deleteBoardLocally(boardId));
+          await dispatch(fetchBoard(boardId));
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
@@ -57,7 +52,7 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
       };
       break;
 
-    case 'column':
+    case 'deleteColumn':
       title = 'Видалити колонку';
       message = `Чи точно ви хочете видалити колонку ${name} ?`;
       deleteData = {
@@ -68,7 +63,7 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
       func = async (): Promise<void> => {
         try {
           await dispatch(deleteColumn(deleteData as IColumnDelete));
-          dispatch(deleteColumnLocally(id));
+          await dispatch(fetchBoard(boardId));
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
@@ -76,7 +71,7 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
       };
       break;
 
-    case 'card':
+    case 'deleteCard':
       title = 'Видалити картку';
       message = `Чи точно ви хочете видалити картку ${name} ?`;
       deleteData = {
@@ -86,8 +81,7 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
       func = async (): Promise<void> => {
         try {
           await dispatch(deleteCard(deleteData as ICardDelete));
-          dispatch(closeModal());
-          dispatch(deleteCardLocally(id));
+          // await dispatch(fetchBoard(boardId));
           window.location.href = `/trello-doma/board/${boardId}`;
         } catch (e: unknown) {
           const error = e as string;
@@ -115,12 +109,12 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
 };
 
 export const handleEdit = async (props: IHandleEdit): Promise<void> => {
-  const { itemName, event, dispatch, boardId, data } = props;
-  const { id } = event.currentTarget;
+  const { action, event, dispatch, boardId, data } = props;
+  const id = event?.currentTarget.id;
   let func: () => Promise<void> = async () => {};
   let editData: object;
 
-  switch (itemName) {
+  switch (action) {
     case 'editColumnTitle':
       editData = {
         boardId,
@@ -129,9 +123,23 @@ export const handleEdit = async (props: IHandleEdit): Promise<void> => {
       };
       func = async (): Promise<void> => {
         try {
-          event.preventDefault();
+          event?.preventDefault();
           await dispatch(editColumn(editData as IColumnEdit));
-          dispatch(editColumnLocally(editData as IColumnEdit));
+          await dispatch(fetchBoard(boardId));
+        } catch (e: unknown) {
+          const error = e as string;
+          throw new Error(error);
+        }
+      };
+      break;
+    case 'editColumnsPosition':
+      editData = {
+        boardId,
+        data,
+      };
+      func = async (): Promise<void> => {
+        try {
+          await dispatch(editColumnsPosition(editData as IColumnEditPos));
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
@@ -146,7 +154,7 @@ export const handleEdit = async (props: IHandleEdit): Promise<void> => {
       func = async (): Promise<void> => {
         try {
           await dispatch(editBoard(editData as IBoardEdit));
-          dispatch(editBoardLocally(editData as IBoardEdit));
+          await dispatch(fetchBoard(boardId));
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
@@ -160,8 +168,7 @@ export const handleEdit = async (props: IHandleEdit): Promise<void> => {
       };
       func = async (): Promise<void> => {
         try {
-          await dispatch(editColor(editData as IColorEdit));
-          dispatch(editBoardColorLocally(editData as IColorEdit));
+          await dispatch(editBoard(editData as IBoardEdit));
         } catch (error) {
           const e = error as string;
           throw new Error(e);
@@ -176,9 +183,23 @@ export const handleEdit = async (props: IHandleEdit): Promise<void> => {
       };
       func = async (): Promise<void> => {
         try {
-          event.preventDefault();
+          event?.preventDefault();
           await dispatch(editCard(editData as ICardEdit));
-          dispatch(editCardLocally(editData as ICardEdit));
+          await dispatch(fetchBoard(boardId));
+        } catch (e: unknown) {
+          const error = e as string;
+          throw new Error(error);
+        }
+      };
+      break;
+    case 'editCardsPosition':
+      editData = {
+        boardId,
+        data,
+      };
+      func = async (): Promise<void> => {
+        try {
+          await dispatch(editCardsPosition(editData as ICardEditPos));
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
@@ -193,11 +214,11 @@ export const handleEdit = async (props: IHandleEdit): Promise<void> => {
 };
 
 export const handleAdd = async (props: IHandleAdd): Promise<void> => {
-  const { itemName, dispatch, boardId, data, refresh } = props;
+  const { action, dispatch, boardId, data } = props;
   let func: () => Promise<void> = async () => {};
   let postData: object;
 
-  switch (itemName) {
+  switch (action) {
     case 'addBoard':
       postData = {
         data,
@@ -225,7 +246,6 @@ export const handleAdd = async (props: IHandleAdd): Promise<void> => {
       };
       func = async (): Promise<void> => {
         await dispatch(addCard(postData as ICardPost));
-        if (refresh) await dispatch(fetchBoard(boardId));
       };
       break;
     default:

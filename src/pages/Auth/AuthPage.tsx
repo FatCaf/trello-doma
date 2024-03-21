@@ -5,7 +5,7 @@ import PassWordStrengthChecker from './PasswordStrengthChecker';
 import instance from '../../api/requests';
 import { AuthResponse, SignUpResponse } from '../../models/models';
 
-export default function AuthPage(): JSX.Element {
+export default function AuthPage({ isSignInClicked }: { isSignInClicked: boolean }): JSX.Element {
   const [authForm, setAuthForm] = useState<{ login: string; password: string; confirmPassword: string }>({
     login: '',
     password: '',
@@ -18,7 +18,7 @@ export default function AuthPage(): JSX.Element {
     loginError: '',
     confirmPasswordError: '',
   });
-  const [signInClicked, setSignInClicked] = useState(false);
+  const [signInClicked, setSignInClicked] = useState(isSignInClicked);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 

@@ -1,0 +1,162 @@
+.greeting__block {
+  height: 75vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.greeting__subtitle {
+  width: 100%;
+  & p,
+  & span {
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    color: #172b4d;
+  }
+
+  & .first__str {
+    opacity: 0;
+    animation: anim-first-str linear 3s forwards 5.3s;
+  }
+
+  & .second__str {
+    opacity: 0;
+    animation: anim-second-str linear 1s forwards 6.3s;
+  }
+}
+
+.to__auth__block {
+  opacity: 0;
+  animation: anim-auth-block linear 1s forwards 7s;
+  margin-top: 150px;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 40px;
+  & .or {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 50%;
+
+    & div {
+      width: 100%;
+    }
+  }
+
+  & button {
+    color: #f1f2f4;
+  }
+}
+
+#logo {
+  fill: #f1f2f4;
+  animation: anim-fill 1s forwards 5s;
+}
+
+#logo path:nth-child(1) {
+  animation: anim-line 2s ease forwards 3s;
+  stroke-dasharray: 402px;
+  stroke-dashoffset: 402px;
+}
+
+#logo path:nth-child(2) {
+  animation: anim-line 2s ease forwards 2.7s;
+  stroke-dasharray: 526px;
+  stroke-dashoffset: 526px;
+}
+
+#logo path:nth-child(3) {
+  animation: anim-line 2s ease forwards 2.4s;
+  stroke-dasharray: 334px;
+  stroke-dashoffset: 334px;
+}
+
+#logo path:nth-child(4) {
+  animation: anim-line 2s ease forwards 2.1s;
+  stroke-dasharray: 515px;
+  stroke-dashoffset: 515px;
+}
+
+#logo path:nth-child(5) {
+  animation: anim-line 2s ease forwards 1.8s;
+  stroke-dasharray: 334px;
+  stroke-dashoffset: 334px;
+}
+
+#logo path:nth-child(6) {
+  animation: anim-line 2s ease forwards 1.5s;
+  stroke-dasharray: 223px;
+  stroke-dashoffset: 223px;
+}
+
+#logo path:nth-child(7) {
+  animation: anim-line 2s ease forwards 1.2s;
+  stroke-dasharray: 223px;
+  stroke-dashoffset: 223px;
+}
+
+#logo path:nth-child(8) {
+  animation: anim-line 2s ease forwards 0.9s;
+  stroke-dasharray: 408px;
+  stroke-dashoffset: 408px;
+}
+
+#logo path:nth-child(9) {
+  animation: anim-line 2s ease forwards 0.6s;
+  stroke-dasharray: 208px;
+  stroke-dashoffset: 208px;
+}
+
+#logo path:nth-child(10) {
+  animation: anim-line 2s ease forwards 0.3s;
+  stroke-dasharray: 327px;
+  stroke-dashoffset: 327px;
+}
+
+@keyframes anim-line {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes anim-fill {
+  to {
+    fill: #172b4d;
+  }
+}
+
+@keyframes anim-first-str {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes anim-second-str {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes anim-auth-block {
+  to {
+    opacity: 1;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  #logo {
+    width: 300px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .greeting__block {
+    margin-top: 100px;
+  }
+}

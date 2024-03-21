@@ -6,11 +6,11 @@
   "homepage": "https://fatcaf.github.io/trello-doma",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && npm run deploy",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "prepare": "husky install",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "gh-pages -d dist"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": "eslint --fix",
@@ -18,9 +18,11 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
+    "@types/react-beautiful-dnd": "^13.1.8",
     "axios": "^1.6.2",
     "dotenv": "^16.3.1",
     "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-confirm-alert": "^3.0.6",
     "react-dom": "^18.2.0",
     "react-redux": "^9.0.4",

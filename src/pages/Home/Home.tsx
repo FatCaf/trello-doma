@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as React from 'react';
 import './Home.scss';
 import { Link } from 'react-router-dom';
@@ -6,7 +6,6 @@ import BoardPreview from '../../components/BoardPreview';
 import AddBoardModal from '../../components/AddBoardModal';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchBoards } from '../../store/slices/homeSlice';
-import { openModal } from '../../store/slices/modalSlice';
 import { handleDelete } from '../../common/handlers/handlers';
 import { IHandleDelete } from '../../models/models';
 
@@ -14,25 +13,24 @@ export default function Home(): JSX.Element {
   const dispatch = useAppDispatch();
   const { status } = useAppSelector((state) => state.boards);
   const { boards } = useAppSelector((state) => state.boards);
-  const { modals } = useAppSelector((state) => state.modal);
+  const [addBoardClicked, setAddBoardClicked] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchBoards());
+    const getBoards = async (): Promise<void> => {
+      await dispatch(fetchBoards());
+    };
+
+    getBoards();
   }, [dispatch]);
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>): void => {
     const props: IHandleDelete = {
-      itemName: 'board',
+      action: 'deleteBoard',
       event,
       dispatch,
       boardId: event.currentTarget.id,
     };
     handleDelete(props);
-  };
-
-  const handleModalClick = (modal: string | null, event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
-    event.stopPropagation();
-    dispatch(openModal({ modalName: modal }));
   };
 
   return (
@@ -59,17 +57,13 @@ export default function Home(): JSX.Element {
                 </div>
               </div>
             ))}
-          <div
-            data-name="add-board"
-            className="add__board"
-            onClick={(event) => handleModalClick(event.currentTarget.getAttribute('data-name'), event)}
-          >
+          <div className="add__board" onClick={() => setAddBoardClicked(!addBoardClicked)}>
             <p>
               <span>+</span> Додати нову дошку
             </p>
           </div>
         </div>
-        {modals[0]?.modalName === 'add-board' && <AddBoardModal />}
+        {addBoardClicked && <AddBoardModal onClose={() => setAddBoardClicked(!addBoardClicked)} />}
       </div>
     </div>
   );

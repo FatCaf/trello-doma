@@ -1,6 +1,8 @@
-import { useRef, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-shadow */
+import { useState } from 'react';
 import * as React from 'react';
 import { useParams } from 'react-router';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 import Card from '../Card/Card';
 import './Column.scss';
 import { IColumn, IHandleDelete, IHandleEdit, IHandleAdd, IEditPos } from '../../../../models/models';
@@ -9,9 +11,8 @@ import InputField from '../../../../components/InputField';
 import { handleAdd, handleDelete, handleEdit } from '../../../../common/handlers/handlers';
 import editPosition from '../../../../common/handlers/positionEditor';
 import instance from '../../../../api/requests';
-import { deleteCard } from '../../../../store/slices/cardSlice';
 
-export default function Column({ id, title, cards }: IColumn): JSX.Element {
+export default function Column({ id, title, cards, provided }: IColumn): JSX.Element {
   const ids = useParams<{ boardId: string }>();
   const boardId = ids.boardId as string;
   const dispatch = useAppDispatch();
@@ -20,7 +21,6 @@ export default function Column({ id, title, cards }: IColumn): JSX.Element {
   const [isCardAddClicked, setCardAddClicked] = useState(false);
   const [cardTitle, setCardTitle] = useState('Безіменна картка');
   const [columnTitle, setColumnTitle] = useState('Безіменна колонка');
-  const columnRef = useRef<HTMLDivElement>(null);
 
   const handleClick = async (event: React.MouseEvent<HTMLDivElement>): Promise<void> => {
     const Posprops: IEditPos = {
@@ -31,7 +31,7 @@ export default function Column({ id, title, cards }: IColumn): JSX.Element {
     const posArray = editPosition(Posprops);
 
     const props: IHandleDelete = {
-      itemName: 'column',
+      action: 'deleteColumn',
       event,
       dispatch,
       boardId,
@@ -53,20 +53,18 @@ export default function Column({ id, title, cards }: IColumn): JSX.Element {
         },
       };
       const props: IHandleAdd = {
-        itemName: 'addCard',
+        action: 'addCard',
         dispatch,
         data: postData,
         boardId,
-        refresh: true,
       };
       await handleAdd(props);
     } else if (actionType === 'edit') {
       const editData = {
         title: columnTitle,
-        position: 1,
       };
       const props: IHandleEdit = {
-        itemName: 'editColumnTitle',
+        action: 'editColumnTitle',
         boardId,
         dispatch,
         event,
@@ -77,66 +75,14 @@ export default function Column({ id, title, cards }: IColumn): JSX.Element {
     }
   };
 
-  const onDragEnterHandler = (e: React.DragEvent<HTMLDivElement>): void => {
-    e.preventDefault();
-  };
-
-  const onDragOverHandler = (e: React.DragEvent<HTMLDivElement>): void => {
-    e.preventDefault();
-    if (columnRef.current && columnRef.current.className === 'column') {
-      setTimeout(() => {
-        columnRef.current?.classList.add('hovered');
-      }, 0);
-    }
-  };
-
-  const onDragLeaveHandler = (e: React.DragEvent<HTMLDivElement>): void => {
-    e.preventDefault();
-    if (columnRef.current && columnRef.current.className === 'column hovered') {
-      setTimeout(() => {
-        columnRef.current?.classList.remove('hovered');
-      }, 0);
-    }
-  };
-  const onDropHandler = async (e: React.DragEvent<HTMLDivElement>): Promise<void> => {
-    let cardInfo = JSON.parse(e.dataTransfer.getData('cardInfo'));
-
-    if (cardInfo.list_id !== e.currentTarget.id) {
-      cardInfo = { ...cardInfo, list_id: Number(e.currentTarget.id) };
-      // eslint-disable-next-line @typescript-eslint/no-shadow
-      const { id, ...rest } = cardInfo;
-
-      const Posprops: IEditPos = {
-        elementsArray: lists,
-        elementId: Number(e.currentTarget.id),
-        itemName: 'card',
-      };
-
-      const posArray = editPosition(Posprops);
-
-      const props: IHandleAdd = {
-        itemName: 'addCard',
-        dispatch,
-        data: rest,
-        boardId,
-        refresh: true,
-      };
-      await dispatch(deleteCard({ boardId, cardId: id }));
-      await handleAdd(props);
-      if (posArray.length > 0) await instance.put(`board/${boardId}/card`, posArray);
-    }
-  };
-
   return (
     <div
       className="column"
       id={`${id}`}
       key={id}
-      ref={columnRef}
-      onDragLeave={(e: React.DragEvent<HTMLDivElement>) => onDragLeaveHandler(e)}
-      onDragEnter={(e: React.DragEvent<HTMLDivElement>) => onDragEnterHandler(e)}
-      onDrop={(e: React.DragEvent<HTMLDivElement>) => onDropHandler(e)}
-      onDragOver={(e: React.DragEvent<HTMLDivElement>) => onDragOverHandler(e)}
+      ref={provided?.innerRef}
+      {...provided?.dragHandleProps}
+      {...provided?.draggableProps}
     >
       <div className="column__header">
         <div className="column__title">
@@ -164,26 +110,35 @@ export default function Column({ id, title, cards }: IColumn): JSX.Element {
           <div>X</div>
         </div>
       </div>
-      <div className="column__cards">
-        {cards &&
-          [...cards].sort((cur, next) => cur.position - next.position).map((card) => <Card {...card} key={card.id} />)}
-        <div className="add__card">
-          {isCardAddClicked ? (
-            <InputField
-              id={id}
-              placeholder="Введіть назву картки"
-              buttonText="Додати"
-              onChange={setCardTitle}
-              onSubmit={handleInputSubmit}
-              onClose={() => setCardAddClicked(false)}
-              actionType="add"
-            />
-          ) : (
-            <p onClick={() => setCardAddClicked(true)}>
-              <span>+</span> Додати нову картку
-            </p>
-          )}
-        </div>
+      <Droppable droppableId={String(id)} type="card">
+        {(provided): JSX.Element => (
+          <div className="column__cards" {...provided.droppableProps} ref={provided.innerRef}>
+            {cards &&
+              cards.map((card, index) => (
+                <Draggable index={index} draggableId={String(card.id)} key={card.id}>
+                  {(provided): JSX.Element => <Card {...card} key={card.id} provided={provided} />}
+                </Draggable>
+              ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+      <div className="add__card">
+        {isCardAddClicked ? (
+          <InputField
+            id={id}
+            placeholder="Введіть назву картки"
+            buttonText="Додати"
+            onChange={setCardTitle}
+            onSubmit={handleInputSubmit}
+            onClose={() => setCardAddClicked(false)}
+            actionType="add"
+          />
+        ) : (
+          <p onClick={() => setCardAddClicked(true)}>
+            <span>+</span> Додати нову картку
+          </p>
+        )}
       </div>
     </div>
   );

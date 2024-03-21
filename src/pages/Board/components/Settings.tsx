@@ -3,41 +3,38 @@ import * as React from 'react';
 import './Settings.scss';
 import { useParams } from 'react-router';
 import { IHandleEdit } from '../../../models/models';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { closeModal } from '../../../store/slices/modalSlice';
+import { useAppDispatch } from '../../../store/hooks';
 import { handleEdit } from '../../../common/handlers/handlers';
-import { setBodyColor } from '../../../store/slices/bodyColorSlice';
+import { fetchBoard } from '../../../store/slices/boardSlice';
 
-const Settings = memo((): JSX.Element => {
+const Settings = memo(({ onClose }: { onClose: () => void }): JSX.Element => {
   const dispatch = useAppDispatch();
   const ids = useParams<{ boardId: string }>();
   const boardId = ids.boardId as string;
-  const title = useAppSelector((state) => state.board.board.title);
 
   const handleClick = async (event: React.MouseEvent<HTMLDivElement>): Promise<void> => {
     const clickedColor = getComputedStyle(event.currentTarget).backgroundColor;
     const editData = {
-      title,
       custom: {
         background: clickedColor,
       },
     };
     const props: IHandleEdit = {
-      itemName: 'editBoardColor',
+      action: 'editBoardColor',
       boardId,
       dispatch,
       event,
       data: editData,
     };
     await handleEdit(props);
-    dispatch(setBodyColor({ key: boardId, color: clickedColor }));
+    await dispatch(fetchBoard(boardId));
   };
 
   return (
     <div className="settings__window">
       <div className="settings__header">
         <h4>Змінити колір</h4>
-        <div className="close" onClick={() => dispatch(closeModal())}>
+        <div className="close" onClick={onClose}>
           <div>X</div>
         </div>
       </div>

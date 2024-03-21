@@ -8,6 +8,8 @@ interface CardSlice {
   card: ICard;
   status: string;
   error: unknown;
+  isCardAdded: boolean;
+  isCardDeleted: boolean;
 }
 
 const initialState: CardSlice = {
@@ -22,6 +24,8 @@ const initialState: CardSlice = {
   },
   status: '',
   error: '',
+  isCardAdded: false,
+  isCardDeleted: false,
 };
 
 export const addCard = createAsyncThunk('card/addCard', async (postData: ICardPost) => {
@@ -65,10 +69,12 @@ const cardSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(addCard.fulfilled, (state) => {
       state.status = 'resolved';
+      state.isCardAdded = !state.isCardAdded;
     });
     builder.addCase(addCard.rejected, (state, action) => {
       state.status = 'rejected';
       state.error = action.payload;
+      state.isCardAdded = false;
     });
     builder.addCase(editCard.fulfilled, (state) => {
       state.status = 'resolved';

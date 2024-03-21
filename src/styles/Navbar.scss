@@ -55,12 +55,15 @@
 }
 
 @media screen and (max-width: 500px) {
+  .container.head {
+    width: 100%;
+  }
+
   .title {
     font-size: 12px;
   }
 
   .navbar__wrapper {
-    width: 100%;
     gap: 10px;
   }
 
@@ -68,6 +71,9 @@
     background-color: $main-text-color;
     padding: 5px;
     & a {
+      color: $tile-bgc;
+    }
+    & button {
       color: $tile-bgc;
     }
     &:hover {

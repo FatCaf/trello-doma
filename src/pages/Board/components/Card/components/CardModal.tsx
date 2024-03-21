@@ -4,7 +4,6 @@ import './CardModal.scss';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import addSvg from '../../../../../assets/add.svg';
-import { closeModal } from '../../../../../store/slices/modalSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ICard, IColumn, IEditPos, IHandleDelete, IHandleEdit } from '../../../../../models/models';
 import User from '../../../../../components/User';
@@ -13,15 +12,14 @@ import { handleDelete, handleEdit } from '../../../../../common/handlers/handler
 import CardAction from './CardAction';
 import editPosition from '../../../../../common/handlers/positionEditor';
 import instance from '../../../../../api/requests';
+import { fetchBoardsSequentially } from '../../../../../store/slices/cardModalSlice';
 
-export default function CardModal(): JSX.Element {
+export default function CardModal({ cardId }: { cardId: string }): JSX.Element {
   const dispatch = useAppDispatch();
   const ids = useParams<{ boardId: string }>();
   const boardId = ids.boardId as string;
-  const ID = useAppSelector((state) => state.modal.modals[0]?.ID);
   const lists = useAppSelector((state) => state.board.board.lists);
-  const [card, setCard] = useState<ICard>();
-  const [list, setList] = useState<IColumn>();
+  const boards = useAppSelector((state) => state.boards.boards);
   const [tempUser] = useState(['Ivan', 'Vasya', 'Petya']);
   const [isCardTitleClicked, setCardTitleClicked] = useState(false);
   const [cardTitle, setCardTitle] = useState('');
@@ -29,19 +27,19 @@ export default function CardModal(): JSX.Element {
   const [descriptionText, setDescriptionText] = useState('');
   const [isMoveClicked, setMoveClicked] = useState(false);
   const [isCopyClicked, setCopyClicked] = useState(false);
-
+  const [list] = useState<IColumn>(
+    lists.find((list) => list.cards.some((card) => card.id === Number(cardId))) as IColumn
+  );
+  const [card] = useState<ICard>(list.cards.find((card) => card.id === Number(cardId)) as ICard);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const extractedCard = lists
-      .map((list) => list.cards.find((card) => card.id === Number(ID)))
-      .filter((card) => card !== undefined);
+    const getAllBoards = async (): Promise<void> => {
+      await dispatch(fetchBoardsSequentially(boards));
+    };
 
-    const parentList = lists.filter((list) => list.cards.includes(extractedCard[0] as ICard));
-
-    setList(parentList[0]);
-    setCard(extractedCard[0]);
-  }, [ID, dispatch, lists]);
+    getAllBoards();
+  }, [boards, dispatch]);
 
   const handleClick = async (event: React.MouseEvent<HTMLDivElement>): Promise<void> => {
     const Posprops: IEditPos = {
@@ -53,7 +51,7 @@ export default function CardModal(): JSX.Element {
     const posArray = editPosition(Posprops);
 
     const props: IHandleDelete = {
-      itemName: 'card',
+      action: 'deleteCard',
       event,
       dispatch,
       boardId,
@@ -71,7 +69,7 @@ export default function CardModal(): JSX.Element {
         list_id: list?.id,
       };
       const props: IHandleEdit = {
-        itemName: 'editCard',
+        action: 'editCard',
         boardId,
         dispatch,
         event,
@@ -90,7 +88,7 @@ export default function CardModal(): JSX.Element {
           <div className="titles">
             {isCardTitleClicked ? (
               <InputField
-                id={Number(ID)}
+                id={Number(cardId)}
                 buttonText="Змінити"
                 placeholder="Введіть назву картки"
                 onChange={setCardTitle}
@@ -108,7 +106,6 @@ export default function CardModal(): JSX.Element {
           <div
             className="cancel cancel-card"
             onClick={() => {
-              dispatch(closeModal());
               navigate(`/board/${boardId}`);
             }}
           >
@@ -145,7 +142,7 @@ export default function CardModal(): JSX.Element {
                 {isDescriptionClicked ? (
                   <div className="edit__description">
                     <form
-                      id={ID}
+                      id={cardId}
                       name="description"
                       onSubmit={(event: React.FormEvent<HTMLFormElement>) => handleInputSubmit(event, 'edit')}
                     >
@@ -181,15 +178,27 @@ export default function CardModal(): JSX.Element {
               Копіювати
             </div>
             {isCopyClicked && (
-              <CardAction onClose={() => setCopyClicked(false)} actionTitle="Копіювання картки" actionType="copy" />
+              <CardAction
+                onClose={() => setCopyClicked(false)}
+                actionTitle="Копіювання картки"
+                actionType="copy"
+                listId={Number(list?.id)}
+                cardId={cardId}
+              />
             )}
             <div className="move" onClick={() => setMoveClicked(true)}>
               Перемістити
             </div>
             {isMoveClicked && (
-              <CardAction onClose={() => setMoveClicked(false)} actionTitle="Переміщення картки" actionType="move" />
+              <CardAction
+                onClose={() => setMoveClicked(false)}
+                actionTitle="Переміщення картки"
+                actionType="move"
+                listId={Number(list?.id)}
+                cardId={cardId}
+              />
             )}
-            <div className="archive" id={ID} data-name={card?.title} onClick={(event) => handleClick(event)}>
+            <div className="archive" id={cardId} data-name={card?.title} onClick={(event) => handleClick(event)}>
               Видалити
             </div>
           </div>

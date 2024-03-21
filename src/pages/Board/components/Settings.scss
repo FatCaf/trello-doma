@@ -12,6 +12,7 @@
   flex-direction: column;
   justify-content: space-around;
   border-bottom-left-radius: 8px;
+  z-index: 999;
   & hr {
     width: 100%;
     color: $main-text-color;

@@ -1,7 +1,9 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
-import { IBoard, ICard, ICardDelete, IColumn, IEditPos, IHandleAdd } from '../models/models';
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
+import { ICard, ICardDelete, IColumn, IEditPos, IHandleAdd, ISelectForm } from '../models/models';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import '../styles/SelectForm.scss';
 import instance from '../api/requests';
@@ -9,151 +11,72 @@ import { handleAdd } from '../common/handlers/handlers';
 import { deleteCard } from '../store/slices/cardSlice';
 import { fetchBoard } from '../store/slices/boardSlice';
 import editPosition from '../common/handlers/positionEditor';
-import { closeModal } from '../store/slices/modalSlice';
 
-export default function SelectForm({ actionType }: { actionType: string }): JSX.Element {
+export default function SelectForm({ actionType, listId, cardId }: ISelectForm): JSX.Element {
   const dispatch = useAppDispatch();
   const boards = useAppSelector((state) => state.boards.boards);
-  const boardTitle = useAppSelector((state) => state.board.board.title);
-  const ID = useAppSelector((state) => state.modal.modals[0]?.ID);
+  const allBoards = useAppSelector((state) => state.cardModal.allBoards);
   const ids = useParams<{ boardId: string }>();
   const boardId = ids.boardId as string;
   const columns = useAppSelector((state) => state.board.board.lists);
-  const [toBoard, setToBoard] = useState('');
-  const [listId, setListId] = useState<number>(0);
-  const [selectedCard, setSelectedCard] = useState<ICard>(Object);
+  const [toBoard, setToBoard] = useState(boardId);
+  const [toList, setToList] = useState(listId);
+  const [lists, setLists] = useState<IColumn[]>(allBoards[boardId].lists);
+  const [cards, setCards] = useState<ICard[]>(lists.find((list) => list.id === listId)?.cards as ICard[]);
+  const [selectedCard] = useState<ICard>(cards.find((card) => card.id === Number(cardId)) as ICard);
   const [position, setPosition] = useState(1);
-  const [allBoards, setAllBoards] = useState<IBoard[]>([]);
-  const [lists, setLists] = useState<IColumn[]>([]);
-  const [cards, setCards] = useState<ICard[]>([]);
-
-  useEffect(() => {
-    const fetchBoardsSequentially = async (): Promise<void> => {
-      try {
-        const fetchedBoards: IBoard[] = [];
-
-        // eslint-disable-next-line no-restricted-syntax
-        for (const item of boards) {
-          // eslint-disable-next-line no-await-in-loop
-          const response: IBoard = await instance.get(`/board/${item.id}`);
-          fetchedBoards.push(response);
-        }
-
-        setAllBoards(fetchedBoards);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error fetching boards:', error);
-      }
-    };
-    fetchBoardsSequentially();
-  }, [boards]);
-
-  useEffect(() => {
-    const listsInBoard: IColumn[] = [];
-
-    allBoards.forEach((board) => {
-      if (board.title === boardTitle) listsInBoard.push(...board.lists);
-    });
-
-    setToBoard(boardId);
-    setLists(listsInBoard);
-  }, [ID, allBoards, boardId, boardTitle]);
-
-  useEffect(() => {
-    const cardsInList: ICard[] = [];
-
-    const foundList = lists.find((list) => list.cards.some((card) => card.id === Number(ID)));
-
-    if (foundList) {
-      cardsInList.push(...foundList.cards);
-      setListId(foundList.id);
-      setCards(cardsInList);
-    }
-  }, [ID, lists]);
-
-  useEffect(() => {
-    const foundCard = cards.find((card) => card.id === Number(ID));
-
-    if (foundCard) {
-      setPosition(foundCard.position);
-      setSelectedCard(foundCard);
-    }
-  }, [ID, cards, position]);
+  const [newCardTitle, setNewCardTitle] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>, itemName: string): void => {
-    if (itemName === 'board') {
-      const selectedBoardId = event.target.value;
+    const itemId = event.target.value;
 
-      const selectedBoard = boards.find((board) => board.id === Number(selectedBoardId));
+    switch (itemName) {
+      case 'board':
+        setToBoard(itemId);
+        setLists(allBoards[itemId].lists);
+        break;
 
-      if (selectedBoard) {
-        const listsInBoard: IColumn[] = [];
+      case 'column':
+        setToList(Number(itemId));
+        setCards(lists.find((list) => list.id === Number(itemId))?.cards as ICard[]);
+        setPosition(cards.length > 0 ? selectedCard.position : 1);
+        break;
 
-        allBoards.forEach((board) => {
-          if (board.title === selectedBoard.title) listsInBoard.push(...board.lists);
-        });
+      case 'position':
+        setPosition(Number(event.currentTarget.value));
+        break;
 
-        setToBoard(String(selectedBoard.id));
-        setLists(listsInBoard);
-        setListId(listsInBoard[0].id);
-      }
-    } else if (itemName === 'column') {
-      const selectedListId = event.target.value;
-
-      const selectedList = lists.find((list) => list.id === Number(selectedListId));
-
-      if (selectedList) {
-        const cardsInList: ICard[] = [];
-
-        lists.forEach((list) => {
-          if (list.id === selectedList.id) cardsInList.push(...list.cards);
-        });
-        setListId(selectedList.id);
-        setCards(cardsInList);
-        setPosition(cardsInList.length > 0 ? selectedCard.position : 1);
-      }
-    } else if (itemName === 'position') {
-      setPosition(Number(event.currentTarget.value));
+      default:
+        break;
     }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, actionType: string): Promise<void> => {
     event.preventDefault();
-    if (actionType === 'copy') {
-      const addData = {
-        title: selectedCard.title,
-        description: selectedCard.description,
-        position,
-        list_id: listId,
-      };
+    const addData = {
+      title: newCardTitle.length > 0 ? newCardTitle : selectedCard.title,
+      description: selectedCard.description,
+      position,
+      list_id: toList,
+    };
 
-      const props: IHandleAdd = {
-        itemName: 'addCard',
-        boardId: toBoard,
-        dispatch,
-        data: addData,
-        refresh: toBoard === boardId,
-      };
+    const props: IHandleAdd = {
+      action: 'addCard',
+      boardId: toBoard,
+      dispatch,
+      data: addData,
+    };
+
+    if (actionType === 'copy') {
       await handleAdd(props);
     } else if (actionType === 'move') {
       const Posprops: IEditPos = {
-        elementId: Number(ID),
+        elementId: Number(cardId),
         elementsArray: columns,
         itemName: 'card',
       };
-      const addData = {
-        title: selectedCard.title,
-        description: selectedCard.description,
-        position,
-        list_id: listId,
-      };
-      const props: IHandleAdd = {
-        itemName: 'addCard',
-        boardId: toBoard,
-        dispatch,
-        data: addData,
-        refresh: toBoard === boardId,
-      };
+
       const deleteData: ICardDelete = {
         boardId,
         cardId: String(selectedCard.id),
@@ -162,7 +85,7 @@ export default function SelectForm({ actionType }: { actionType: string }): JSX.
       if (posArray.length > 0) await instance.put(`board/${boardId}/card`, posArray);
       await handleAdd(props);
       await dispatch(deleteCard(deleteData));
-      dispatch(closeModal());
+      navigate(`/board/${boardId}`);
       await dispatch(fetchBoard(boardId));
     }
   };
@@ -172,7 +95,11 @@ export default function SelectForm({ actionType }: { actionType: string }): JSX.
       {actionType === 'copy' && (
         <div className="name__input">
           <label>Назва</label>
-          <input type="text" defaultValue={selectedCard.title} />
+          <input
+            type="text"
+            defaultValue={selectedCard.title}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewCardTitle(e.target.value)}
+          />
         </div>
       )}
       <div className="select select-board">
@@ -189,12 +116,11 @@ export default function SelectForm({ actionType }: { actionType: string }): JSX.
       <div className="select select-column">
         <label>Колонка</label>
         <select name="column" key="column" onChange={(e) => handleChange(e, 'column')}>
-          {lists &&
-            lists.map((list) => (
-              <option key={list.id} value={list.id} selected={listId === list.id}>
-                {list.title}
-              </option>
-            ))}
+          {allBoards[toBoard].lists.map((list) => (
+            <option key={list.id} value={list.id} selected={listId === list.id}>
+              {list.title}
+            </option>
+          ))}
         </select>
       </div>
       <div className="select select-position">

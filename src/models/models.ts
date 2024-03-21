@@ -1,4 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
+import { DraggableProvided } from 'react-beautiful-dnd';
 
 export type Card = {
   id: number;
@@ -38,22 +40,18 @@ export interface IBoard {
   lists: List[];
 }
 
-export interface IColumn extends List {}
-export interface ICard extends Card {}
-
-export interface IColorEdit {
-  boardId: string;
-  data: {
-    title: string;
-    custom: Custom;
-  };
+export interface IColumn extends List {
+  provided?: DraggableProvided;
+}
+export interface ICard extends Card {
+  provided?: DraggableProvided;
 }
 
 export interface IBoardEdit {
   boardId: string;
   data: {
-    title: string;
-    custom: Custom;
+    title?: string;
+    custom?: Custom;
   };
 }
 
@@ -82,8 +80,12 @@ export interface IColumnEdit {
   listId: string;
   data: {
     title: string;
-    position: number;
   };
+}
+
+export interface IColumnEditPos {
+  boardId: string;
+  data: IEditedPos[];
 }
 
 export interface ICardPost {
@@ -104,12 +106,18 @@ export interface ICardDelete {
 
 export interface ICardEdit {
   boardId: string;
-  cardId: string | undefined;
+  cardId: string;
   data: {
-    title: string | undefined;
-    description: string | undefined;
-    list_id: number | undefined;
+    title?: string;
+    description?: string;
+    list_id: number;
   };
+}
+
+export interface ICardEditPos {
+  boardId: string;
+  cardId: string;
+  data: IEditedPos[];
 }
 
 export interface IInputField {
@@ -124,7 +132,7 @@ export interface IInputField {
 
 export interface IBoardHeader {
   boardTitle: string;
-  backgroundColor: string;
+  onOpen: () => void;
 }
 
 export interface ISlot {
@@ -141,7 +149,9 @@ export interface IMovingElement {
 export interface IEditPos {
   elementId: number;
   elementsArray: Array<IColumn>;
-  itemName: string;
+  itemName?: string;
+  destPos?: number;
+  sourcePos?: number;
 }
 
 export interface IEditedPos {
@@ -151,32 +161,40 @@ export interface IEditedPos {
 }
 
 export interface IHandleDelete {
-  itemName: string;
+  action: string;
   event: React.MouseEvent<HTMLDivElement> | React.FormEvent<HTMLFormElement>;
   dispatch: ThunkDispatch<object, undefined, UnknownAction>;
   boardId: string;
 }
 
 export interface IHandleEdit {
-  itemName: string;
-  event: React.MouseEvent<HTMLDivElement> | React.FormEvent<HTMLFormElement>;
+  action: string;
+  event?: React.MouseEvent<HTMLDivElement> | React.FormEvent<HTMLFormElement>;
+  cardId?: number;
   dispatch: ThunkDispatch<object, undefined, UnknownAction>;
   boardId: string;
   data: object;
 }
 
 export interface IHandleAdd {
-  itemName: string;
+  action: string;
   dispatch: ThunkDispatch<object, undefined, UnknownAction>;
   boardId: string;
   data: object;
-  refresh: boolean;
 }
 
 export interface ICardAction {
   actionTitle: string;
   actionType: string;
+  listId: number;
+  cardId: string;
   onClose: () => void;
+}
+
+export interface ISelectForm {
+  actionType: string;
+  listId: number;
+  cardId: string;
 }
 
 export interface AuthResponse {

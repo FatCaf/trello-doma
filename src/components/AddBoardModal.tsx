@@ -4,10 +4,9 @@ import preview from '../assets/preview.png';
 import '../styles/AddBoardModal.scss';
 import { useAppDispatch } from '../store/hooks';
 import { IHandleAdd } from '../models/models';
-import { closeModal } from '../store/slices/modalSlice';
 import { handleAdd } from '../common/handlers/handlers';
 
-export default function AddBoardModal(): JSX.Element {
+export default function AddBoardModal({ onClose }: { onClose: () => void }): JSX.Element {
   const dispatch = useAppDispatch();
   const [previewColor, setPreviewColor] = useState('rgb(205, 90, 145)');
   const [boardName, setBoardName] = useState('');
@@ -27,19 +26,19 @@ export default function AddBoardModal(): JSX.Element {
       },
     };
     const props: IHandleAdd = {
-      itemName: 'addBoard',
+      action: 'addBoard',
       dispatch,
       data: postData,
       boardId: '',
-      refresh: true,
     };
     await handleAdd(props);
+    onClose();
   };
 
   return (
     <div className="wrapper">
       <div className="add__window">
-        <div className="cancel" onClick={() => dispatch(closeModal())}>
+        <div className="cancel" onClick={onClose}>
           <span>X</span>
         </div>
         <div className="preview" style={{ backgroundColor: previewColor }}>

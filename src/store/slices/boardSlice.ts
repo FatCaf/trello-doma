@@ -8,8 +8,8 @@ import {
   IColumnDelete,
   IColumnEdit,
   IColumnPost,
-  ICardEdit,
-  IColorEdit,
+  IColumnEditPos,
+  ICardEditPos,
 } from '../../models/models';
 import instance from '../../api/requests';
 
@@ -17,6 +17,8 @@ interface BoardSlice {
   board: IBoard;
   status: string;
   error: unknown;
+  isBoardLoaded: boolean;
+  isPosEdited: boolean;
 }
 
 const initialState: BoardSlice = {
@@ -29,6 +31,8 @@ const initialState: BoardSlice = {
   },
   status: '',
   error: '',
+  isBoardLoaded: false,
+  isPosEdited: false,
 };
 
 export const fetchBoard = createAsyncThunk('board/fetchBoard', async (boardId: string) => {
@@ -72,6 +76,27 @@ export const editColumn = createAsyncThunk('board/editColumn', async (editData: 
   }
 });
 
+export const editColumnsPosition = createAsyncThunk('board/editColumnsPosition', async (editData: IColumnEditPos) => {
+  const { boardId, data } = editData;
+
+  try {
+    await instance.put(`board/${boardId}/list`, data);
+  } catch (error) {
+    const e = error as AxiosError;
+    throw new Error(e.message);
+  }
+});
+
+export const editCardsPosition = createAsyncThunk('board/editCardsPosition', async (editData: ICardEditPos) => {
+  const { boardId, data } = editData;
+  try {
+    await instance.put(`board/${boardId}/card`, data);
+  } catch (error) {
+    const e = error as AxiosError;
+    throw new Error(e.message);
+  }
+});
+
 export const deleteColumn = createAsyncThunk('board/deleteColumn', async (delData: IColumnDelete) => {
   const { boardId, listId } = delData;
   try {
@@ -85,48 +110,14 @@ export const deleteColumn = createAsyncThunk('board/deleteColumn', async (delDat
 const boardSlice = createSlice({
   name: 'board',
   initialState,
-  reducers: {
-    deleteColumnLocally: (state, action) => {
-      state.board.lists = state.board.lists.filter((list) => list.id !== Number(action.payload));
-    },
-    deleteCardLocally: (state, action) => {
-      state.board.lists.forEach(
-        (list) => (list.cards = list.cards.filter((card) => card.id !== Number(action.payload)))
-      );
-    },
-    editBoardLocally: (state, action: PayloadAction<IBoardEdit>) => {
-      const { title } = action.payload.data;
-      state.board.title = title;
-    },
-    editColumnLocally: (state, action: PayloadAction<IColumnEdit>) => {
-      const { listId, data } = action.payload;
-      const editedList = state.board.lists.find((list) => list.id === Number(listId));
-      if (editedList) editedList.title = data.title;
-    },
-    editCardLocally: (state, action: PayloadAction<ICardEdit>) => {
-      const { cardId, data } = action.payload;
-
-      const foundList = state.board.lists.find((list) => list.cards.some((card) => card.id === Number(cardId)));
-      if (foundList) {
-        const foundCard = foundList.cards.find((card) => card.id === Number(cardId));
-
-        if (foundCard) {
-          if (foundCard.title === data.title) foundCard.description = data.description as string;
-          foundCard.title = data.title as string;
-        }
-      }
-    },
-    editBoardColorLocally: (state, action: PayloadAction<IColorEdit>) => {
-      const { data } = action.payload;
-      state.board.custom.background = data.custom.background;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchBoard.pending, (state) => {
       state.status = 'loading';
       state.error = '';
     });
     builder.addCase(fetchBoard.fulfilled.type, (state, action: PayloadAction<IBoard>) => {
+      state.isBoardLoaded = true;
       state.status = 'resolved';
       state.board = action.payload;
     });
@@ -142,6 +133,18 @@ const boardSlice = createSlice({
       state.status = 'rejected';
       state.error = action.payload;
     });
+    builder.addCase(editColumnsPosition.fulfilled, (state) => {
+      state.isPosEdited = !state.isPosEdited;
+    });
+    builder.addCase(editColumnsPosition.rejected, (state) => {
+      state.isPosEdited = false;
+    });
+    builder.addCase(editCardsPosition.fulfilled, (state) => {
+      state.isPosEdited = !state.isPosEdited;
+    });
+    builder.addCase(editCardsPosition.rejected, (state) => {
+      state.isPosEdited = false;
+    });
     builder.addCase(deleteColumn.fulfilled, (state) => {
       state.status = 'resolved';
     });
@@ -152,12 +155,4 @@ const boardSlice = createSlice({
   },
 });
 
-export const {
-  deleteColumnLocally,
-  deleteCardLocally,
-  editBoardLocally,
-  editColumnLocally,
-  editCardLocally,
-  editBoardColorLocally,
-} = boardSlice.actions;
 export default boardSlice.reducer;

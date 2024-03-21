@@ -1,81 +1,27 @@
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { useState } from 'react';
 import { ICard } from '../../../../models/models';
 import './Card.scss';
-import { useAppDispatch } from '../../../../store/hooks';
-import { openModal } from '../../../../store/slices/modalSlice';
 
-export default function ColumnCard({ id, title, description, list_id, position, users, custom }: ICard): JSX.Element {
-  const dispatch = useAppDispatch();
+export default function ColumnCard({ id, title, provided }: ICard): JSX.Element {
   const ids = useParams<{ boardId: string }>();
   const boardId = ids.boardId as string;
   const navigate = useNavigate();
 
-  const handleModalClick = (
-    modal: string | null,
-    ID: string,
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ): void => {
+  const handleModalClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
     event.stopPropagation();
     navigate(`/board/${boardId}/card/${event.currentTarget.id}`);
-    dispatch(openModal({ modalName: modal, ID }));
-  };
-
-  const [onHold, setOnHold] = useState(false);
-
-  const resetClassName = (e: React.DragEvent<HTMLDivElement>): void => {
-    e.preventDefault();
-    const isCard = e.currentTarget.className === 'card' || e.currentTarget.className === 'card anotherCardOnTop';
-    if (isCard) {
-      setTimeout(() => {
-        e.currentTarget.className = 'card';
-      }, 0);
-    }
-  };
-
-  const dragStartHandler = (e: React.DragEvent<HTMLDivElement>): void => {
-    e.dataTransfer.setData('cardInfo', JSON.stringify({ id, title, description, list_id, position, users, custom }));
-    e.currentTarget.className += ' ohhold';
-    setTimeout(() => {
-      setOnHold(true);
-    }, 0);
-  };
-  const dragEndHandler = (): void => {
-    setOnHold(false);
-  };
-
-  const onDragOverHandler = (e: React.DragEvent<HTMLDivElement>): void => {
-    e.preventDefault();
-    if (e.currentTarget.className === 'card') {
-      setTimeout(() => {
-        e.currentTarget.className = 'card anotherCardOnTop';
-      }, 0);
-    }
-  };
-
-  const onDragLeaveHandler = (e: React.DragEvent<HTMLDivElement>): void => {
-    resetClassName(e);
-  };
-  const onDropHandler = (e: React.DragEvent<HTMLDivElement>): void => {
-    resetClassName(e);
   };
 
   return (
     <div
-      className={`card ${onHold ? 'dragging' : ''}`}
+      className="card"
+      ref={provided?.innerRef}
+      {...provided?.dragHandleProps}
+      {...provided?.draggableProps}
       key={id}
-      data-name="card"
       id={`${id}`}
-      onClick={(event) =>
-        handleModalClick(event.currentTarget.getAttribute('data-name'), event.currentTarget.id, event)
-      }
-      draggable
-      onDragStart={(e: React.DragEvent<HTMLDivElement>) => dragStartHandler(e)}
-      onDragOver={(e: React.DragEvent<HTMLDivElement>) => onDragOverHandler(e)}
-      onDragEnd={dragEndHandler}
-      onDrop={(e: React.DragEvent<HTMLDivElement>) => onDropHandler(e)}
-      onDragLeave={(e: React.DragEvent<HTMLDivElement>) => onDragLeaveHandler(e)}
+      onClick={(event) => handleModalClick(event)}
     >
       <div className="card__title">
         <h4>{title}</h4>
