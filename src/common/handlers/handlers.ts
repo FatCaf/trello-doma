@@ -81,8 +81,7 @@ export const handleDelete = async (props: IHandleDelete): Promise<void> => {
       func = async (): Promise<void> => {
         try {
           await dispatch(deleteCard(deleteData as ICardDelete));
-          // await dispatch(fetchBoard(boardId));
-          window.location.href = `/trello-doma/board/${boardId}`;
+          window.location.href = `/board/${boardId}`;
         } catch (e: unknown) {
           const error = e as string;
           throw new Error(error);
